@@ -1,7 +1,8 @@
-package com.example.demo.services;
+package com.servidor.servidor.services;
 
-import com.example.demo.entities.BaseEntity;
-import com.example.demo.repositories.BaseRepository;
+import com.servidor.servidor.entities.BaseEntity;
+import com.servidor.servidor.exceptions.ErrorServiceException;
+import com.servidor.servidor.repositories.BaseRepository;
 
 import java.util.List;
 import java.util.Optional;

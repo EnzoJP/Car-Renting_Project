@@ -1,6 +1,6 @@
-package com.example.demo.repositories;
+package com.servidor.servidor.repositories;
 
-import com.example.demo.entities.BaseEntity;
+import com.servidor.servidor.entities.BaseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 

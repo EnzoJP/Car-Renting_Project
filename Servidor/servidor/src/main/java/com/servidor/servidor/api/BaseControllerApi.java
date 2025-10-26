@@ -1,10 +1,8 @@
-package com.example.demo.api;
+package com.servidor.servidor.api;
 
-
-
-import com.example.demo.entities.BaseEntity;
-import com.example.demo.services.BaseService;
-import com.example.demo.services.ErrorServiceException;
+import com.servidor.servidor.entities.BaseEntity;
+import com.servidor.servidor.exceptions.ErrorServiceException;
+import com.servidor.servidor.services.BaseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

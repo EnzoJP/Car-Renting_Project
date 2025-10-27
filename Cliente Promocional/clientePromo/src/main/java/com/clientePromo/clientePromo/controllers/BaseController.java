@@ -1,8 +1,9 @@
-package com.sprint.ejercicio2bCliente.controllers;
+package com.clientePromo.clientePromo.controllers;
 
 
-import com.sprint.ejercicio2bCliente.DTO.Identifiable;
-import com.sprint.ejercicio2bCliente.services.BaseServiceClient;
+import com.clientePromo.clientePromo.DTO.Identifiable;
+import com.clientePromo.clientePromo.exceptions.ErrorServiceException;
+import com.clientePromo.clientePromo.services.BaseServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

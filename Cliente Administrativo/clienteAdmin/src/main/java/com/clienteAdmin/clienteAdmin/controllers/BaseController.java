@@ -1,8 +1,10 @@
-package com.sprint.ejercicio2bCliente.controllers;
+package com.clienteAdmin.clienteAdmin.controllers;
 
 
-import com.sprint.ejercicio2bCliente.DTO.Identifiable;
-import com.sprint.ejercicio2bCliente.services.BaseServiceClient;
+import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
+
+import com.clienteAdmin.clienteAdmin.DTO.Identifiable;
+import com.clienteAdmin.clienteAdmin.services.BaseServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

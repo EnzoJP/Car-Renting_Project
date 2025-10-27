@@ -1,4 +1,4 @@
-package com.sprint.ejercicio2bCliente.services;
+package com.clientePromo.clientePromo.services;
 
 
 import org.springframework.http.ResponseEntity;

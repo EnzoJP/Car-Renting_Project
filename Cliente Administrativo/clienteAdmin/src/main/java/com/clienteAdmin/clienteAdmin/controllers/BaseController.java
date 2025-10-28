@@ -52,6 +52,11 @@ public abstract class BaseController<T extends Identifiable<ID>, ID> {
         return object.getClass().getSimpleName();
     }
 
+    @GetMapping("")
+    public String index() {
+        return redirectList;
+    }
+
     @GetMapping("/list")
     public String listar(Model model) {
         try {

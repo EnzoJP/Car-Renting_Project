@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="favicon.ico">
+
+    <title th:text="${titleEdit}"></title>
+    <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <header th:insert="~{fragments/menubody :: menu-principal}"></header>
+
+    <main role="main">     
+      <hr>
+      <div class="container"> 
+
+        <div class="card">
+		  <h4 class="card-header">
+			<strong th:text="${titleEdit}"></strong>
+		  </h4>             
+          <div class="card-body">
+			
+            <form th:action="@{'/' + ${nameEntityLower} + '/actualizar'}" method="post" th:object="${item}">
+			
+			  <input type="hidden" name="id" th:field="*{id}" />
+
+			  <div th:if="${msgExito != null}" class='alert alert-success' th:text="${msgExito}" role='alert'></div>    
+			  <div th:if="${msgError != null}" class='alert alert-danger' th:text="${msgError}" role='alert'></div> 
+			  
+              <div class="row">
+                <div class="col-md-6"> 
+                  <div class="form-group">
+					
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" placeholder="" required="required" th:disabled="${isDisabled}">
+				
+				  </div>
+                </div>                
+              </div>
+			  
+			  <div class="row">
+			  	<div class="col-md-6"> 
+			  		<div class="form-group">
+			  		    <label for="comboBoxPais">País</label>
+			  			<select class="form-control" 
+						        id="comboBoxPais"
+								th:field="*{provincia.pais.id}"
+			  					th:disabled="${isDisabled}">
+								<option value="">Seleccione país...</option>
+			  			        <option th:each="pais : ${paises}" 
+			  			  		        th:value="${pais.id}" 
+			  			  		        th:text="${pais.nombre}"
+			  						    th:selected="${item.provincia.pais != null && pais.id == item.provincia.pais.id}">
+			  			        </option>                     
+			  		     </select>
+			  	     </div>
+			     </div>
+			  </div>
+
+			  <div class="row">
+			      <div class="col-md-6"> 
+			  		 <div class="form-group">
+			  			<label for="comboBoxProvincia">Provincia</label>
+			  			<select class="form-control" 
+			  					id="comboBoxProvincia"
+								th:field="*{provincia.id}"
+			  			  		th:disabled="${isDisabled}">
+			  					<option value="">Seleccione provincia...</option>
+			  			  	    <option th:each="provincia : ${provincias}" 
+			  			  			    th:value="${provincia.id}" 
+			  			  			    th:text="${provincia.nombre}"
+			  			  				th:selected="${item.provincia != null && provincia.id == item.provincia.id}">
+			  			  	    </option>                     
+			  			 </select>
+			  	     </div>
+		          </div>  
+			  </div> 
+			  
+              <hr>
+			  <div class="d-grid gap-2 float-right justify-content-md-end">
+               <button type="submit" title="Guardar el registro." class="btn btn-primary" th:disabled="${isDisabled}">ACEPTAR</button>   
+			   <a class="btn btn-primary" th:href="@{'/' + ${nameEntityLower} + '/cancelar'}" role="button">CANCELAR</a>
+			  </div>
+			   
+			</form>
+			 
+          </div>
+        </div>
+      </div> 
+	  
+    </main>
+
+    <footer th:insert="~{fragments/footer :: pie-pagina}" class="footer"></footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script> 
+	
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			      const paisSeleccionado = document.getElementById('comboBoxPais');
+			      const provinciaSeleccionada = document.getElementById('comboBoxProvincia');
+
+			      function limpiarSelect(select, textoOpcionDefault) {
+			        select.innerHTML = '<option value="">' + textoOpcionDefault + '</option>';
+			        select.disabled = true;
+			      }
+
+			      function habilitarSelect(select) {
+			        select.disabled = false;
+			      }
+
+				  paisSeleccionado.addEventListener('change', function() {
+				    const paisId = this.value;
+
+				    limpiarSelect(provinciaSeleccionada, 'Seleccione provincia...');
+
+				    if (paisId) {
+				      fetch("/departamento/filterComboBox?entidad=Provincia&nombreAtributoSuperClass=pais&idFiltro=" + paisId)
+				        .then(response => response.json())
+				        .then(provincias => {
+						
+						  const provinciaActualId = typeof item !== 'undefined' && item?.provincia?.id;
+		
+				          provincias.forEach(provincia => {
+				            const option = document.createElement('option');
+				            option.value = provincia.id;
+				            option.text = provincia.nombre;
+				            provinciaSeleccionada.appendChild(option);
+				          });
+				          habilitarSelect(provinciaSeleccionada);
+				        })
+				        .catch(error => console.error('Error cargando provincias:', error));
+				    }
+				  });
+
+			      // Si estamos editando, cargar los datos existentes
+			      const paisActual = paisSeleccionado.value;
+			      if (paisActual) {
+			        paisSeleccionado.dispatchEvent(new Event('change'));
+			      }
+			    });
+	</script>
+	  
+  </body>
+</html>

@@ -24,10 +24,10 @@ public class UsuarioService extends BaseService<Usuario, Long> {
             if (usuario.getNumeroDocumento() == null || usuario.getNumeroDocumento().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el número de documento del usuario");
             }
-            if (usuario.getNombreUsuario() == null || usuario.getNombreUsuario().trim().isEmpty()) {
+            if (usuario.getUsername() == null || usuario.getUsername().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre de usuario");
             }
-            if (usuario.getClave() == null || usuario.getClave().trim().isEmpty()) {
+            if (usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar la clave del usuario");
             }
             if (usuario.getRol() == null) {

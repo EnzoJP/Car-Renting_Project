@@ -1,6 +1,6 @@
-package com.clienteAdmin.clienteAdmin.controllers;
+package com.clientePromo.clientePromo.controllers;
 
-import com.clienteAdmin.clienteAdmin.auth.AuthService;
+import com.clientePromo.clientePromo.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

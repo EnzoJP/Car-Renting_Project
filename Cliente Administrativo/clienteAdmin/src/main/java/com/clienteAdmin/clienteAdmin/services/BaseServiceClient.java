@@ -1,7 +1,9 @@
 package com.clienteAdmin.clienteAdmin.services;
 
 
-import org.springframework.http.ResponseEntity;
+import com.clienteAdmin.clienteAdmin.auth.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -13,14 +15,24 @@ public abstract class BaseServiceClient<T, ID> {
     protected final String apiUrl;
     protected final Class<T> dtoClass;
 
+    @Autowired
+    protected AuthService authService; //para acceder al token JWT
+
     protected BaseServiceClient(String apiUrl, Class<T> dtoClass) {
         this.apiUrl = apiUrl;
         this.dtoClass = dtoClass;
     }
 
     public List<T> listarActivos() {
-            ResponseEntity<T[]> response = restTemplate.getForEntity(apiUrl, getArrayType());
-            return Arrays.asList(response.getBody());
+        HttpEntity<Void> entity = new HttpEntity<>(authService.authHeaders());
+
+        ResponseEntity<T[]> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                entity,
+                getArrayType()
+        );
+        return Arrays.asList(response.getBody());
     }
 
     @SuppressWarnings("unchecked")
@@ -29,19 +41,35 @@ public abstract class BaseServiceClient<T, ID> {
     }
 
     public T obtener(ID id) {
-        return restTemplate.getForObject(apiUrl + "/" + id, dtoClass);
+        HttpEntity<Void> entity = new HttpEntity<>(authService.authHeaders());
+        ResponseEntity<T> response = restTemplate.exchange(
+                apiUrl + "/" + id,
+                HttpMethod.GET,
+                entity,
+                dtoClass
+        );
+        return response.getBody();
     }
 
     public T alta(T dto) {
-        return restTemplate.postForObject(apiUrl, dto, dtoClass);
+        HttpEntity<T> entity = new HttpEntity<>(dto, authService.authHeaders());
+        ResponseEntity<T> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.POST,
+                entity,
+                dtoClass
+        );
+        return response.getBody();
     }
 
     public void modificar(ID id, T dto) {
-        restTemplate.put(apiUrl + "/" + id, dto);
+        HttpEntity<T> entity = new HttpEntity<>(dto, authService.authHeaders());
+        restTemplate.exchange(apiUrl + "/" + id, HttpMethod.PUT, entity, Void.class);
     }
 
     public void bajaLogica(ID id) {
-        restTemplate.delete(apiUrl + "/" + id);
+        HttpEntity<Void> entity = new HttpEntity<>(authService.authHeaders());
+        restTemplate.exchange(apiUrl + "/" + id, HttpMethod.DELETE, entity, Void.class);
     }
 }
 

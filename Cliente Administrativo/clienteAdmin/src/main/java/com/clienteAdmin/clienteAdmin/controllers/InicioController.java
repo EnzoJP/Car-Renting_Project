@@ -20,11 +20,17 @@ public class InicioController {
     }
 
 
-    @GetMapping("/")
-    public String mostrarLogin(Model model) {
-        model.addAttribute("titulo", "Iniciar Sesión");
-        return "login";
+    @GetMapping({"/", "/inicio"})
+    public String inicio(Model model) {
+        model.addAttribute("titulo", "My Car - Sprint");
+        return "index";
     }
+
+//    @GetMapping("/")
+//    public String mostrarLogin(Model model) {
+//        model.addAttribute("titulo", "Iniciar Sesión");
+//        return "login";
+//    }
 
     @GetMapping("/login")
     public String getLogin(Model model) {
@@ -49,6 +55,7 @@ public class InicioController {
     }
 
 
+    // Home protegido (seria el dashboard)
     @GetMapping("/home")
     public String home(Model model) {
         model.addAttribute("titulo", "Bienvenido al Sistema");

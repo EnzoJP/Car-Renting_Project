@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="favicon.ico">
+
+        <title th:text="${titleEdit}"></title>
+        <link th:href="@{/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+        <link th:href="@{/bootstrap/css/jumbotron.css}" rel="stylesheet">
+        <link th:href="@{/bootstrap/css/sticky-footer-navbar.css}" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <header th:insert="~{fragments/menubody :: menu-principal}"></header>
+
+        <main role="main">
+            <hr>
+            <div class="container">
+
+                <div class="card">
+                    <h4 class="card-header">
+                        <strong th:text="${titleEdit}"></strong>
+                    </h4>
+                    <div class="card-body">
+
+                        <form th:action="@{'/' + ${nameEntityLower} + '/actualizar'}" method="post" th:object="${item}">
+
+                            <input type="hidden" name="id" th:field="*{id}" />
+
+                            <div th:if="${msgExito != null}" class='alert alert-success' th:text="${msgExito}" role='alert'></div>
+                            <div th:if="${msgError != null}" class='alert alert-danger' th:text="${msgError}" role='alert'></div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+
+                                        <label for="calle">Calle</label>
+                                        <input type="text" class="form-control" th:field="*{calle}" placeholder="" required="required" th:disabled="${isDisabled}">
+
+                                        <label for="numeracion">Numeración</label>
+                                        <input type="text" class="form-control" th:field="*{numeracion}" placeholder="" th:disabled="${isDisabled}">
+
+                                        <label for="barrio">Barrio</label>
+                                        <input type="text" class="form-control" th:field="*{barrio}" placeholder="" th:disabled="${isDisabled}">
+
+                                        <label for="manzanaPiso">Manzana/Piso</label>
+                                        <input type="text" class="form-control" th:field="*{manzanaPiso}" placeholder="" th:disabled="${isDisabled}">
+
+                                        <label for="casaDepartamento">Casa/Departamento</label>
+                                        <input type="text" class="form-control" th:field="*{casaDepartamento}" placeholder="" th:disabled="${isDisabled}">
+
+                                        <label for="referencia">Referencia</label>
+                                        <textarea class="form-control" th:field="*{referencia}" th:disabled="${isDisabled}"></textarea>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="comboBoxPais">País</label>
+                                        <select class="form-control"
+                                                id="comboBoxPais"
+                                                th:field="*{localidad.departamento.provincia.pais.id}"
+                                                th:disabled="${isDisabled}">
+                                            <option value="">Seleccione...</option>
+                                            <option th:each="pais : ${paises}"
+                                                    th:value="${pais.id}"
+                                                    th:text="${pais.nombre}"
+                                                    th:selected="${item.localidad.departamento.provincia.pais != null && pais.id == item.localidad.departamento.provincia.pais.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="comboBoxProvincia">Provincia</label>
+                                        <select class="form-control"
+                                                id="comboBoxProvincia"
+                                                th:field="*{localidad.departamento.provincia.id}"
+                                                th:disabled="${isDisabled}">
+                                            <option value="">Seleccione...</option>
+                                            <option th:each="provincia : ${provincias}"
+                                                    th:value="${provincia.id}"
+                                                    th:text="${provincia.nombre}"
+                                                    th:selected="${item.localidad.departamento.provincia != null && provincia.id == item.localidad.departamento.provincia.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="comboBoxDepartamento">Departamento</label>
+                                        <select class="form-control"
+                                                id="comboBoxDepartamento"
+                                                th:field="*{localidad.departamento.id}"
+                                                th:disabled="${isDisabled}">
+                                            <option value="">Seleccione...</option>
+                                            <option th:each="departamento : ${departamentos}"
+                                                    th:value="${departamento.id}"
+                                                    th:text="${departamento.nombre}"
+                                                    th:selected="${item.localidad.departamento != null && departamento.id == item.localidad.departamento.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="comboBoxLocalidad">Localidad</label>
+                                        <select class="form-control"
+                                                id="comboBoxLocalidad"
+                                                th:field="*{localidad.id}"
+                                                th:disabled="${isDisabled}">
+                                            <option value="">Seleccione...</option>
+                                            <option th:each="localidad : ${localidades}"
+                                                    th:value="${localidad.id}"
+                                                    th:text="${localidad.nombre}"
+                                                    th:selected="${item.localidad != null && localidad.id == item.localidad.id}">
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr>
+                            <div class="d-grid gap-2 float-right justify-content-md-end">
+                               <button type="submit" title="Guardar el registro." class="btn btn-primary" th:disabled="${isDisabled}">ACEPTAR</button>
+                               <a class="btn btn-primary" th:href="@{'/' + ${nameEntityLower} + '/cancelar'}" role="button">CANCELAR</a>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <footer th:insert="~{fragments/footer :: pie-pagina}" class="footer"></footer>
+
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                      const paisSeleccionado = document.getElementById('comboBoxPais');
+                      const provinciaSeleccionada = document.getElementById('comboBoxProvincia');
+                      const departamentoSeleccionado = document.getElementById('comboBoxDepartamento');
+                      const localidadSeleccionada = document.getElementById('comboBoxLocalidad');
+
+                      function limpiarSelect(select, textoOpcionDefault) {
+                        select.innerHTML = '<option value="">' + textoOpcionDefault + '</option>';
+                        select.disabled = true;
+                      }
+
+                      function habilitarSelect(select) {
+                        select.disabled = false;
+                      }
+
+                      paisSeleccionado.addEventListener('change', function() {
+                        const paisId = this.value;
+
+                        limpiarSelect(provinciaSeleccionada, 'Seleccione provincia...');
+                        limpiarSelect(departamentoSeleccionado, 'Seleccione departamento...');
+                        limpiarSelect(localidadSeleccionada, 'Seleccione localidad...');
+
+                        if (paisId) {
+                          fetch("/direccion/filterComboBox?entidad=Provincia&nombreAtributoSuperClass=pais&idFiltro=" + paisId)
+                            .then(response => response.json())
+                            .then(provincias => {
+
+                              const provinciaActualId = typeof item !== 'undefined' && item?.localidad?.departamento?.provincia?.id;
+
+                              provincias.forEach(provincia => {
+                                const option = document.createElement('option');
+                                option.value = provincia.id;
+                                option.text = provincia.nombre;
+                                provinciaSeleccionada.appendChild(option);
+                              });
+                              habilitarSelect(provinciaSeleccionada);
+                            })
+                            .catch(error => console.error('Error cargando provincias:', error));
+                        }
+                      });
+
+                      provinciaSeleccionada.addEventListener('change', function() {
+                        const provinciaId = this.value;
+
+                        limpiarSelect(departamentoSeleccionado, 'Seleccione departamento...');
+                        limpiarSelect(localidadSeleccionada, 'Seleccione localidad...');
+
+                        if (provinciaId) {
+                          fetch("/direccion/filterComboBox?entidad=Departamento&nombreAtributoSuperClass=provincia&idFiltro=" + provinciaId)
+                            .then(response => response.json())
+                            .then(departamentos => {
+
+                              const departamentoActualId = typeof item !== 'undefined' && item?.localidad?.departamento?.id;
+
+                              departamentos.forEach(departamento => {
+                                const option = document.createElement('option');
+                                option.value = departamento.id;
+                                option.text = departamento.nombre;
+                                departamentoSeleccionado.appendChild(option);
+                              });
+                              habilitarSelect(departamentoSeleccionado);
+                            })
+                            .catch(error => console.error('Error cargando departamentos:', error));
+                        }
+                      });
+
+                      departamentoSeleccionado.addEventListener('change', function() {
+                        const departamentoId = this.value;
+
+                        limpiarSelect(localidadSeleccionada, 'Seleccione localidad...');
+
+                        if (departamentoId) {
+                          fetch("/direccion/filterComboBox?entidad=Localidad&nombreAtributoSuperClass=departamento&idFiltro=" + departamentoId)
+                            .then(response => response.json())
+                            .then(localidades => {
+
+                              const localidadActualId = typeof item !== 'undefined' && item?.localidad?.id;
+
+                              localidades.forEach(localidad => {
+                                const option = document.createElement('option');
+                                option.value = localidad.id;
+                                option.text = localidad.nombre;
+                                localidadSeleccionada.appendChild(option);
+                              });
+                              habilitarSelect(localidadSeleccionada);
+                            })
+                            .catch(error => console.error('Error cargando localidades:', error));
+                        }
+                      });
+
+                      // Si estamos editando, cargar los datos existentes
+                      const paisActual = paisSeleccionado.value;
+                      if (paisActual) {
+                        paisSeleccionado.dispatchEvent(new Event('change'));
+                      }
+                    });
+        </script>
+
+    </body>
+</html>

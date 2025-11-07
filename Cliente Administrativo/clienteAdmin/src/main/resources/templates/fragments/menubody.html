@@ -1,7 +1,7 @@
-<nav th:fragment="menu-principal" class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+<nav th:fragment="menu-principal" class="navbar navbar-expand-md navbar-light fixed-top" style="background-color: #add8e6;">
     <div class="container-fluid">
 
-		<a class="navbar-brand" th:href="@{/}">DEMO</a>
+		<a class="navbar-brand" th:href="@{/}">Cliente Admin</a>
 		
         <button class="navbar-toggler" type="button" data-toggle="collapse"
                 data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown"
@@ -15,7 +15,7 @@
                 <!-- Configuración -->
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="dropdownConfiguracion" role="button"
-                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Configuración</a>
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Direccion ABMs</a>
                     <div class="dropdown-menu" aria-labelledby="dropdownConfiguracion">
                         <a class="dropdown-item" th:href="@{/pais/list}">ABM País</a>
                         <div class="dropdown-divider"></div>
@@ -26,6 +26,20 @@
                         <a class="dropdown-item" th:href="@{/localidad/list}">ABM Localidad</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" th:href="@{/direccion/list}">ABM Dirección</a>
+                    </div>
+                </li>
+
+
+                <!-- Personas -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dropdownPersonas" role ="button"
+                       data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Personas</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownPersonas">
+                        <a class="dropdown-item" th:href="@{/nacionalidad/list}">ABM Nacionalidad</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" th:href="@{/cliente/list}">ABM Clientes</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" th:href="@{/empleado/list}">ABM Empleados</a>
                     </div>
                 </li>
 

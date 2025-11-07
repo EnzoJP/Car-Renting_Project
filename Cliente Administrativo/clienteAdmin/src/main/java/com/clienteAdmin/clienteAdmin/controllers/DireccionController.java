@@ -1,10 +1,6 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
 import com.clienteAdmin.clienteAdmin.DTO.DireccionDTO;
-import com.clienteAdmin.clienteAdmin.DTO.PaisDTO;
-import com.clienteAdmin.clienteAdmin.DTO.ProvinciaDTO;
-import com.clienteAdmin.clienteAdmin.DTO.DepartamentoDTO;
-import com.clienteAdmin.clienteAdmin.DTO.LocalidadDTO;
 import com.clienteAdmin.clienteAdmin.services.DireccionService;
 import com.clienteAdmin.clienteAdmin.services.PaisService;
 import com.clienteAdmin.clienteAdmin.services.ProvinciaService;
@@ -13,6 +9,7 @@ import com.clienteAdmin.clienteAdmin.services.LocalidadService;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/direccion")
+@RequestMapping("/usuario/direccion")
 public class DireccionController extends BaseController<DireccionDTO, Long> {
 
     @Autowired
@@ -39,7 +36,10 @@ public class DireccionController extends BaseController<DireccionDTO, Long> {
 
     public DireccionController(DireccionService service) {
         super(service);
-        initController(new DireccionDTO(), "LIST DIRECCION", "EDIT DIRECCION");
+        initController(new DireccionDTO(),
+                "LIST DIRECCION",
+                "EDIT DIRECCION",
+                "view/usuario/Menu/direccion/");
     }
 
     @Override
@@ -53,6 +53,11 @@ public class DireccionController extends BaseController<DireccionDTO, Long> {
     @Override
     protected void preModificacion() throws ErrorServiceException {
         preAlta();
+    }
+    @GetMapping("/menu")
+    public String mostrarMenu(Model model) {
+        model.addAttribute("titulo", "Gestión de Direcciones");
+        return "view/usuario/Menu/direccion/detalle";
     }
 
     @GetMapping("/filterComboBox")

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title th:text="${titleEdit}">Editar Dirección</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="sb-nav-fixed">
+
+<nav th:replace="~{view/usuario/components/navbarUs :: navbar_usuario}"></nav>
+
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav th:replace="~{view/usuario/components/sidebar :: sidebar}"></nav>
+    </div>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4" th:text="${titleEdit}">Gestión de Dirección</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a th:href="@{/usuario/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/usuario/direccion/menu}">Direcciones</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/usuario/direccion/list}">Direcciones</a></li>
+                    <li class="breadcrumb-item active" th:text="${item.id == null ? 'Nueva' : 'Editar'}">Formulario</li>
+                </ol>
+
+                <div class="row">
+                    <div class="col-xl-8">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-edit me-1"></i>
+                                <span th:text="${titleEdit}">Formulario</span>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${msgExito != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <span th:text="${msgExito}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <div th:if="${msgError != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span th:text="${msgError}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <form th:action="@{/usuario/direccion/actualizar}" method="post" th:object="${item}">
+                                    <input type="hidden" name="id" th:field="*{id}" />
+
+                                    <h5 class="mt-3">Datos de la Dirección</h5>
+                                    <hr>
+
+                                    <div class="mb-3">
+                                        <label for="calle" class="form-label">
+                                            Calle
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="calle" th:field="*{calle}" placeholder="Ej: San Martín" required="required" th:disabled="${isDisabled}">
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="numeracion" class="form-label">Numeración</label>
+                                            <input type="text" class="form-control" id="numeracion" th:field="*{numeracion}" placeholder="Ej: 1234" th:disabled="${isDisabled}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="barrio" class="form-label">Barrio</label>
+                                            <input type="text" class="form-control" id="barrio" th:field="*{barrio}" placeholder="Ej: Barrio Bombal" th:disabled="${isDisabled}">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="manzanaPiso" class="form-label">Manzana / Piso</label>
+                                            <input type="text" class="form-control" id="manzanaPiso" th:field="*{manzanaPiso}" placeholder="Ej: Mza 20 / Piso 5" th:disabled="${isDisabled}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="casaDepartamento" class="form-label">Casa / Depto</label>
+                                            <input type="text" class="form-control" id="casaDepartamento" th:field="*{casaDepartamento}" placeholder="Ej: Casa 11 / Depto B" th:disabled="${isDisabled}">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="referencia" class="form-label">Referencia</label>
+                                        <textarea class="form-control" id="referencia" rows="2" th:field="*{referencia}" th:disabled="${isDisabled}" placeholder="Ej: Portón verde, frente a la plaza..."></textarea>
+                                    </div>
+
+                                    <h5 class="mt-4">Ubicación</h5>
+                                    <hr>
+
+                                    <div class="mb-3">
+                                        <label for="comboBoxPais" class="form-label">
+                                            País
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select"
+                                                id="comboBoxPais"
+                                                th:field="*{localidad.departamento.provincia.pais.id}"
+                                                th:disabled="${isDisabled}"
+                                                required>
+                                            <option value="">Seleccione país...</option>
+                                            <option th:each="pais : ${paises}"
+                                                    th:value="${pais.id}"
+                                                    th:text="${pais.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="comboBoxProvincia" class="form-label">
+                                            Provincia
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select"
+                                                id="comboBoxProvincia"
+                                                th:field="*{localidad.departamento.provincia.id}"
+                                                th:disabled="${isDisabled}"
+                                                required>
+                                            <option value="">Seleccione provincia...</option>
+                                            <option th:each="provincia : ${provincias}"
+                                                    th:value="${provincia.id}"
+                                                    th:text="${provincia.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="comboBoxDepartamento" class="form-label">
+                                            Departamento
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select"
+                                                id="comboBoxDepartamento"
+                                                th:field="*{localidad.departamento.id}"
+                                                th:disabled="${isDisabled}"
+                                                required>
+                                            <option value="">Seleccione departamento...</option>
+                                            <option th:each="departamento : ${departamentos}"
+                                                    th:value="${departamento.id}"
+                                                    th:text="${departamento.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="comboBoxLocalidad" class="form-label">
+                                            Localidad
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <select class="form-select"
+                                                id="comboBoxLocalidad"
+                                                th:field="*{localidad.id}"
+                                                th:disabled="${isDisabled}"
+                                                required>
+                                            <option value="">Seleccione localidad...</option>
+                                            <option th:each="localidad : ${localidades}"
+                                                    th:value="${localidad.id}"
+                                                    th:text="${localidad.nombre}">
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="submit"
+                                                class="btn btn-primary me-md-2"
+                                                th:disabled="${isDisabled}"
+                                                th:if="${!isDisabled}">
+                                            <i class="fas fa-save me-1"></i> Guardar
+                                        </button>
+                                        <a class="btn btn-secondary"
+                                           th:href="@{/usuario/direccion/cancelar}"
+                                           role="button">
+                                            <i class="fas fa-times me-1"></i>
+                                            <span th:text="${isDisabled ? 'Volver' : 'Cancelar'}">Cancelar</span>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Información
+                            </div>
+                            <div class="card-body">
+                                <p class="small">Los campos marcados con <span class="text-danger">*</span> son obligatorios.</p>
+                                <p class="small mb-0">La selección de ubicación funciona en cascada: País -> Provincia -> Departamento -> Localidad.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{components/footer :: footer}"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/scripts.js}"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    // Pasamos variables de Spring a JavaScript de forma segura
+    const provinciaActualId = /*[[ ${item.localidad?.departamento?.provincia?.id} ]]*/;
+    const departamentoActualId = /*[[ ${item.localidad?.departamento?.id} ]]*/;
+    const localidadActualId = /*[[ ${item.localidad?.id} ]]*/;
+    const urlBase = /*[[ @{/usuario/direccion/filterComboBox} ]]*/; // Usamos el endpoint del DireccionController
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const paisSelect = document.getElementById('comboBoxPais');
+        const provinciaSelect = document.getElementById('comboBoxProvincia');
+        const departamentoSelect = document.getElementById('comboBoxDepartamento');
+        const localidadSelect = document.getElementById('comboBoxLocalidad');
+        const isDisabled = paisSelect.disabled; // Chequea si estamos en modo "consultar"
+
+        // --- Funciones Helper ---
+        function limpiarSelect(select, defaultText) {
+            if (isDisabled) return;
+            select.innerHTML = `<option value="">${defaultText}</option>`;
+            select.disabled = true;
+        }
+
+        function popularSelect(select, items, idSeleccionado) {
+            if (!isDisabled) {
+                select.innerHTML = `<option value="">${select.options[0].text}</option>`;
+            }
+
+            items.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.text = item.nombre;
+                if (item.id == idSeleccionado) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+            select.disabled = isDisabled;
+        }
+
+        // --- Funciones de Carga ---
+        function cargarProvincias(paisId) {
+            if (!paisId) {
+                limpiarSelect(provinciaSelect, 'Seleccione provincia...');
+                limpiarSelect(departamentoSelect, 'Seleccione departamento...');
+                limpiarSelect(localidadSelect, 'Seleccione localidad...');
+                return;
+            }
+
+            fetch(`${urlBase}?entidad=Provincia&nombreAtributoSuperClass=pais&idFiltro=${paisId}`)
+                .then(response => response.json())
+                .then(provincias => {
+                    popularSelect(provinciaSelect, provincias, provinciaActualId);
+                    if (provinciaActualId && provinciaSelect.value == provinciaActualId) {
+                        cargarDepartamentos(provinciaActualId);
+                    }
+                })
+                .catch(error => console.error('Error cargando provincias:', error));
+        }
+
+        function cargarDepartamentos(provinciaId) {
+            if (!provinciaId) {
+                limpiarSelect(departamentoSelect, 'Seleccione departamento...');
+                limpiarSelect(localidadSelect, 'Seleccione localidad...');
+                return;
+            }
+
+            fetch(`${urlBase}?entidad=Departamento&nombreAtributoSuperClass=provincia&idFiltro=${provinciaId}`)
+                .then(response => response.json())
+                .then(departamentos => {
+                    popularSelect(departamentoSelect, departamentos, departamentoActualId);
+                    if (departamentoActualId && departamentoSelect.value == departamentoActualId) {
+                        cargarLocalidades(departamentoActualId);
+                    }
+                })
+                .catch(error => console.error('Error cargando departamentos:', error));
+        }
+
+        function cargarLocalidades(departamentoId) {
+            if (!departamentoId) {
+                limpiarSelect(localidadSelect, 'Seleccione localidad...');
+                return;
+            }
+
+            fetch(`${urlBase}?entidad=Localidad&nombreAtributoSuperClass=departamento&idFiltro=${departamentoId}`)
+                .then(response => response.json())
+                .then(localidades => {
+                    popularSelect(localidadSelect, localidades, localidadActualId);
+                })
+                .catch(error => console.error('Error cargando localidades:', error));
+        }
+
+        // --- Event Listeners ---
+        paisSelect.addEventListener('change', function() {
+            limpiarSelect(provinciaSelect, 'Cargando provincias...');
+            limpiarSelect(departamentoSelect, 'Seleccione departamento...');
+            limpiarSelect(localidadSelect, 'Seleccione localidad...');
+            cargarProvincias(this.value);
+        });
+
+        provinciaSelect.addEventListener('change', function() {
+            limpiarSelect(departamentoSelect, 'Cargando departamentos...');
+            limpiarSelect(localidadSelect, 'Seleccione localidad...');
+            cargarDepartamentos(this.value);
+        });
+
+        departamentoSelect.addEventListener('change', function() {
+            limpiarSelect(localidadSelect, 'Cargando localidades...');
+            cargarLocalidades(this.value);
+        });
+
+        // --- Carga Inicial ---
+        if (paisSelect.value) {
+            cargarProvincias(paisSelect.value);
+        } else {
+            limpiarSelect(provinciaSelect, 'Seleccione provincia...');
+            limpiarSelect(departamentoSelect, 'Seleccione departamento...');
+            limpiarSelect(localidadSelect, 'Seleccione localidad...');
+        }
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

@@ -29,6 +29,7 @@ public abstract class BaseController<T extends Identifiable<ID>, ID> {
     protected Model model;
     protected String titleList;
     protected String titleEdit;
+    protected String urlPrefix = "";
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     protected BaseController(BaseServiceClient<T, ID> service) {
@@ -39,19 +40,31 @@ public abstract class BaseController<T extends Identifiable<ID>, ID> {
      * Inicializa nombres y vistas. Llamar desde el constructor del controlador concreto.
      * ejemplo: initController(new AutorDTO(), "LIST AUTOR", "EDIT AUTOR") por ejemplo;
      */
-    protected void initController(T entidad, String titleList, String titleEdit) {
+
+    protected void initController(T entidad, String titleList, String titleEdit, String viewBasePath) {
         this.entity = entidad;
         this.nameClass = getSimpleName(getNameEntity(entidad));
         this.nameEntityLower = nameClass.toLowerCase();
-        this.viewList = "view/l" + nameClass + ".html";
-        this.redirectList = "redirect:/" + nameEntityLower + "/list";
-        this.viewEdit = "view/e" + nameClass + ".html";
+
+        // asignamos las vistas usando la ruta que nos hayan pasado desde el controllador hijo
+        this.viewList = viewBasePath + "l" + nameClass;
+        this.viewEdit = viewBasePath + "e" + nameClass;
+
+        // 2. Lee el @RequestMapping de la clase hija (ej: "/usuario/pais")
+        try {
+            RequestMapping requestMapping = this.getClass().getAnnotation(RequestMapping.class);
+            if (requestMapping != null && requestMapping.value().length > 0) {
+                this.urlPrefix = requestMapping.value()[0];
+            }
+        } catch (Exception e) {
+            this.urlPrefix = ""; // fallback
+        }
+
+        //revisar
+        this.redirectList = "redirect:" + this.urlPrefix + "/list";
+
         this.titleList = titleList;
         this.titleEdit = titleEdit;
-    }
-
-    private String getNameEntity(T object) {
-        return object.getClass().getSimpleName();
     }
 
     @GetMapping("")
@@ -192,6 +205,10 @@ public abstract class BaseController<T extends Identifiable<ID>, ID> {
     @GetMapping("/cancelar")
     public String cancelar() {
         return redirectList;
+    }
+
+    private String getNameEntity(T object) {
+        return object.getClass().getSimpleName();
     }
 
     private String getSimpleName(String simple) {

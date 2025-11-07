@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/pais")
+@RequestMapping("/usuario/pais")
 public class PaisController extends BaseController<PaisDTO, Long> {
 
     @Autowired
@@ -15,6 +15,9 @@ public class PaisController extends BaseController<PaisDTO, Long> {
 
     public PaisController(PaisService service) {
         super(service);
-        initController(new PaisDTO(), "LIST PAIS", "EDIT PAIS");
+        initController(new PaisDTO(),
+                "Listado Paises",
+                "Gestión de Pais",
+                "view/usuario/Menu/direccion/");
     }
 }

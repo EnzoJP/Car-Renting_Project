@@ -4,11 +4,13 @@ package com.clienteAdmin.clienteAdmin.controllers;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 
 import com.clienteAdmin.clienteAdmin.DTO.Identifiable;
+import com.clienteAdmin.clienteAdmin.DTO.ImagenDTO;
 import com.clienteAdmin.clienteAdmin.services.BaseServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.lang.reflect.ParameterizedType;
@@ -172,10 +174,15 @@ public abstract class BaseController<T extends Identifiable<ID>, ID> {
      * El formulario debe publicar un objeto 'item' con la misma estructura del DTO (incluyendo id).
      */
     @PostMapping("/actualizar")
-    public String actualizar(@ModelAttribute("item") T entidad, RedirectAttributes attributes, Model model) {
+    public String actualizar(@ModelAttribute("item") T entidad, @RequestParam(value = "file", required = false) MultipartFile file, RedirectAttributes attributes, Model model) {
         try {
             this.model = model;
             preActualziacion();
+
+            if (file != null && !file.isEmpty() && entidad instanceof ImagenDTO) {
+                ((ImagenDTO) entidad).setContenido(file.getBytes());
+                ((ImagenDTO) entidad).setMime(file.getContentType());
+            }
 
             if (entidad.getId() == null) {
                 service.alta(entidad);

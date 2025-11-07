@@ -19,6 +19,15 @@ public class ImagenService extends BaseService<Imagen, Long> {
                 throw new ErrorServiceException("Debe indicar el nombre de la imagen");
             }
 
+            // duplicados chequeo
+
+            if (imagen.getNombre() != null && !imagen.getNombre().isEmpty()) {
+                boolean exists = ((ImagenRepository) repository).existsByNombre(imagen.getNombre());
+                if (exists) {
+                    throw new ErrorServiceException("Ya existe una imagen con ese nombre");
+                }
+            }
+
         } catch (ErrorServiceException e) {
             throw e;
         } catch (Exception e) {

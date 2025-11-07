@@ -18,6 +18,14 @@ public class NacionalidadService extends BaseService<Nacionalidad, Long> {
             if (nacionalidad.getNombre() == null || nacionalidad.getNombre().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el nombre de la nacionalidad");
             }
+
+            if (nacionalidad.getNombre() != null && !nacionalidad.getNombre().isEmpty()) {
+                boolean exists = ((NacionalidadRepository) repository).existsByNombre(nacionalidad.getNombre());
+                if (exists) {
+                    throw new ErrorServiceException("Ya existe una nacionalidad con ese nombre");
+                }
+            }
+
         } catch (ErrorServiceException e) {
             throw e;
         } catch (Exception e) {

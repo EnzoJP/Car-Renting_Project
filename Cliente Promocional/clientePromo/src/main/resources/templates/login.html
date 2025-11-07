@@ -5,19 +5,30 @@
     <title th:text="${titulo}">Login</title>
 </head>
 <body>
-<h1 th:text="${titulo}"></h1>
+    <h1 th:text="${titulo}"></h1>
 
-<form th:action="@{/login}" method="post">
-    <label for="username">Usuario:</label>
-    <input type="text" id="username" name="username" required><br>
+    <form th:action="@{/login}" method="post">
+        <label for="username">Usuario:</label>
+        <input type="text" id="username" name="username" required><br>
 
-    <label for="password">Contraseña:</label>
-    <input type="password" id="password" name="password" required><br>
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required><br>
 
-    <button type="submit">Iniciar Sesión</button>
-</form>
+        <button type="submit">Iniciar Sesión</button>
+    </form>
+    <div class="divider">
+        <span>O continuar con</span>
+    </div>
+    <a href="http://localhost:9000/oauth2/authorization/google" class="btn-google">
+        <img src="https://www.google.com/favicon.ico" alt="Google">
+        Continuar con Google
+    </a>
 
-<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+    <div class="back-home">
+        <a th:href="@{/inicio}">← Volver al inicio</a>
+    </div>
 
 </body>
 </html>

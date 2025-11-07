@@ -71,6 +71,12 @@ public class InicioController {
         }
     }
 
+    // Endpoint para recibir token de google
+    @GetMapping("/login-success")
+    public String loginSuccess(@RequestParam String token, Model model) {
+        authService.setToken(token);
+        return "redirect:/home";
+    }
 
     @GetMapping("/home")
     public String home(Model model) {

@@ -43,6 +43,8 @@ public class AuthService {
         return token;
     }
 
+    public void setToken(String token) {this.token = token;}
+
     /**
      * Helper para obtener HttpHeaders con el Authorization Bearer token.
      * Útil para llamar a endpoints protegidos después de hacer login.

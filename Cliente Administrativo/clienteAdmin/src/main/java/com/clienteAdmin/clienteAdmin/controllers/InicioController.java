@@ -47,7 +47,7 @@ public class InicioController {
         boolean success = authService.login(username, password);
 
         if (success) {
-            return "redirect:/home";
+            return "redirect:view/usuario/dashboard";
         } else {
             model.addAttribute("error", "Credenciales inválidas");
             return "login";
@@ -56,9 +56,9 @@ public class InicioController {
 
 
     // Home protegido (seria el dashboard)
-    @GetMapping("/home")
+    @GetMapping("/usuario/dashboard")
     public String home(Model model) {
         model.addAttribute("titulo", "Bienvenido al Sistema");
-        return "home";
+        return "view/usuario/dashboard";
     }
 }

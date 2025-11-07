@@ -9,7 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/provincia")
+@RequestMapping("/usuario/provincia")
 public class ProvinciaController extends BaseController<ProvinciaDTO, Long> {
 
     @Autowired
@@ -17,7 +17,10 @@ public class ProvinciaController extends BaseController<ProvinciaDTO, Long> {
 
     public ProvinciaController(ProvinciaService service) {
         super(service);
-        initController(new ProvinciaDTO(), "LIST PROVINCIA", "EDIT PROVINCIA");
+        initController(new ProvinciaDTO(),
+                "Listado Provincias",
+                "Gestión de Provincia",
+                "view/usuario/Menu/direccion/");
     }
 
     @Override

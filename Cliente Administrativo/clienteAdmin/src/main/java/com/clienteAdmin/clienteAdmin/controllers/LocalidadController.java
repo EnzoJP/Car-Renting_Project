@@ -1,5 +1,6 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
+import com.clienteAdmin.clienteAdmin.DTO.DepartamentoDTO;
 import com.clienteAdmin.clienteAdmin.DTO.LocalidadDTO;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import com.clienteAdmin.clienteAdmin.services.DepartamentoService;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/localidad")
+@RequestMapping("/usuario/localidad")
 public class LocalidadController extends BaseController<LocalidadDTO, Long> {
 
     @Autowired
@@ -25,7 +26,10 @@ public class LocalidadController extends BaseController<LocalidadDTO, Long> {
 
     public LocalidadController(LocalidadService service) {
         super(service);
-        initController(new LocalidadDTO(), "LIST LOCALIDAD", "EDIT LOCALIDAD");
+        initController(new LocalidadDTO(),
+                "Listado Localidades",
+                "Gestión de Localidad",
+                "view/usuario/Menu/direccion/");
     }
 
     @Override

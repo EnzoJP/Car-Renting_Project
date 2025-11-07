@@ -1,6 +1,7 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
 import com.clienteAdmin.clienteAdmin.DTO.DepartamentoDTO;
+import com.clienteAdmin.clienteAdmin.DTO.ProvinciaDTO;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import com.clienteAdmin.clienteAdmin.services.DepartamentoService;
 import com.clienteAdmin.clienteAdmin.services.PaisService;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/departamento")
+@RequestMapping("/usuario/departamento")
 public class DepartamentoController extends BaseController<DepartamentoDTO, Long> {
 
     @Autowired
@@ -21,7 +22,10 @@ public class DepartamentoController extends BaseController<DepartamentoDTO, Long
 
     public DepartamentoController(DepartamentoService service) {
         super(service);
-        initController(new DepartamentoDTO(), "LIST DEPARTAMENTO", "EDIT DEPARTAMENTO");
+        initController(new DepartamentoDTO(),
+                "Listado Departamentos",
+                "Gestión de Departamento",
+                "view/usuario/Menu/direccion/");
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
+import com.clienteAdmin.clienteAdmin.DTO.AlquilerDTO;
+import com.clienteAdmin.clienteAdmin.DTO.VehiculoDTO;
 import com.clienteAdmin.clienteAdmin.auth.AuthService;
+import com.clienteAdmin.clienteAdmin.services.AlquilerService;
+import com.clienteAdmin.clienteAdmin.services.VehiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,31 +12,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 public class InicioController {
 
     @Autowired
     private final AuthService authService;
 
+    @Autowired
+    private final VehiculoService vehiculoService;
 
-    public InicioController(AuthService authService) {
+    @Autowired
+    private final AlquilerService alquilerService;
+
+
+    @Autowired
+    public InicioController(AuthService authService, VehiculoService vehiculoService, AlquilerService alquilerService) {
         this.authService = authService;
+        this.vehiculoService = vehiculoService;
+        this.alquilerService = alquilerService;
     }
 
-
-    @GetMapping({"/", "/inicio"})
-    public String inicio(Model model) {
-        model.addAttribute("titulo", "My Car - Sprint");
-        return "index";
-    }
-
-//    @GetMapping("/")
-//    public String mostrarLogin(Model model) {
-//        model.addAttribute("titulo", "Iniciar Sesión");
-//        return "login";
-//    }
-
-    @GetMapping("/login")
+    @GetMapping({"/", "/login"})
     public String getLogin(Model model) {
         model.addAttribute("titulo", "Iniciar Sesión");
         return "login";
@@ -45,20 +50,47 @@ public class InicioController {
             Model model) {
 
         boolean success = authService.login(username, password);
-
         if (success) {
-            return "redirect:view/usuario/dashboard";
+            return "redirect:/admin/dashboard";
         } else {
             model.addAttribute("error", "Credenciales inválidas");
             return "login";
         }
     }
 
-
     // Home protegido (seria el dashboard)
-    @GetMapping("/usuario/dashboard")
+    @GetMapping({"/admin","/admin/dashboard"})
     public String home(Model model) {
-        model.addAttribute("titulo", "Bienvenido al Sistema");
-        return "view/usuario/dashboard";
+
+        try {
+            // grafico de flota de vehicilos
+            List<VehiculoDTO> vehiculos = vehiculoService.listarActivos();
+            Map<String, Long> estadoFlota = vehiculos.stream()
+                    .collect(Collectors.groupingBy(VehiculoDTO::getEstadoVehiculo, Collectors.counting()));
+
+            model.addAttribute("disponibles", estadoFlota.getOrDefault("DISPONIBLE", 0L));
+            model.addAttribute("alquilados", estadoFlota.getOrDefault("ALQUILADO", 0L));
+            model.addAttribute("mantenimiento", estadoFlota.getOrDefault("MANTENIMIENTO", 0L));
+
+            // logica tabla de alquileres recientes
+            List<AlquilerDTO> actividadReciente = alquilerService.listarActivos().stream()
+                    .sorted((a1, a2) -> a2.getFechaDesde().compareTo(a1.getFechaDesde())) // Ordena por fecha (más nuevo primero)
+                    .limit(5) // solo 5
+                    .collect(Collectors.toList());
+
+            model.addAttribute("actividadReciente", actividadReciente);
+
+        } catch (Exception e) {
+            // Si la API está caída, evitamos que la app crashee al loguear
+            model.addAttribute("errorDashboard", "No se pudieron cargar los datos del dashboard: " + e.getMessage());
+            // enviamos valores por defecto para que el gráfico no falle
+            model.addAttribute("disponibles", 0L);
+            model.addAttribute("alquilados", 0L);
+            model.addAttribute("mantenimiento", 0L);
+            model.addAttribute("actividadReciente", Collections.emptyList());
+        }
+
+        model.addAttribute("titulo", "Dashboard Principal");
+        return "view/admin/dashboard";
     }
 }

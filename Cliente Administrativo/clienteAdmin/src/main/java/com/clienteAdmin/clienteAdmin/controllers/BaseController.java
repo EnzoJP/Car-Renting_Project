@@ -50,7 +50,7 @@ public abstract class BaseController<T extends Identifiable<ID>, ID> {
         this.viewList = viewBasePath + "l" + nameClass;
         this.viewEdit = viewBasePath + "e" + nameClass;
 
-        // 2. Lee el @RequestMapping de la clase hija (ej: "/usuario/pais")
+        // 2. Lee el @RequestMapping de la clase hija (ej: "/admin/pais")
         try {
             RequestMapping requestMapping = this.getClass().getAnnotation(RequestMapping.class);
             if (requestMapping != null && requestMapping.value().length > 0) {

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/usuario/direccion")
+@RequestMapping("/admin/direccion")
 public class DireccionController extends BaseController<DireccionDTO, Long> {
 
     @Autowired
@@ -39,7 +39,7 @@ public class DireccionController extends BaseController<DireccionDTO, Long> {
         initController(new DireccionDTO(),
                 "LIST DIRECCION",
                 "EDIT DIRECCION",
-                "view/usuario/Menu/direccion/");
+                "view/admin/Menu/direccion/");
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DireccionController extends BaseController<DireccionDTO, Long> {
     @GetMapping("/menu")
     public String mostrarMenu(Model model) {
         model.addAttribute("titulo", "Gestión de Direcciones");
-        return "view/usuario/Menu/direccion/detalle";
+        return "view/admin/Menu/direccion/detalle";
     }
 
     @GetMapping("/filterComboBox")

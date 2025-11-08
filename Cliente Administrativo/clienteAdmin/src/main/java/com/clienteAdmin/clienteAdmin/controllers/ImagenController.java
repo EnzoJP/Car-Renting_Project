@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/imagen")
+@RequestMapping("/admin/imagen")
 public class ImagenController extends BaseController<ImagenDTO, Long> {
 
     @Autowired
@@ -15,6 +15,9 @@ public class ImagenController extends BaseController<ImagenDTO, Long> {
 
     public ImagenController(ImagenService service) {
         super(service);
-        initController(new ImagenDTO(), "LIST IMAGEN", "EDIT IMAGEN");
+        initController(new ImagenDTO(),
+                "LIST IMAGEN",
+                "EDIT IMAGEN",
+                "view/admin/Menu/utils/");
     }
 }

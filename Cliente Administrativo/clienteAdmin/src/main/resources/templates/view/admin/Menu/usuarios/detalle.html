@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Gestión de Usuarios</title>
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="sb-nav-fixed">
+
+<nav th:replace="~{view/admin/components/navbarUs :: navbar_usuario}"></nav>
+
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav th:replace="~{view/admin/components/sidebar :: sidebar}"></nav>
+    </div>
+
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4" th:text="${titulo}">Gestión de Usuarios</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a th:href="@{/usuario/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Usuarios</li>
+                </ol>
+
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-users-cog me-1"></i>
+                                Seleccione qué desea gestionar
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-4 justify-content-center">
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card border-primary h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                                <h5 class="card-title">Clientes</h5>
+                                                <p class="card-text">Gestionar clientes del sistema.</p>
+                                                <a th:href="@{/admin/cliente/list}" class="btn btn-primary">
+                                                    <i class="fas fa-list me-1"></i> Gestionar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card border-success h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-user-tie fa-3x text-success mb-3"></i>
+                                                <h5 class="card-title">Empleados</h5>
+                                                <p class="card-text">Gestionar empleados y administradores.</p>
+                                                <a th:href="@{/admin/empleado/list}" class="btn btn-success">
+                                                    <i class="fas fa-list me-1"></i> Gestionar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{components/footer :: footer}"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/scripts.js}"></script>
+</body>
+</html>

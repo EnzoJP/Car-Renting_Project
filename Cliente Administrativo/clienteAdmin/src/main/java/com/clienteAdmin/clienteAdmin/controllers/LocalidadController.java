@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/usuario/localidad")
+@RequestMapping("/admin/localidad")
 public class LocalidadController extends BaseController<LocalidadDTO, Long> {
 
     @Autowired
@@ -29,7 +29,7 @@ public class LocalidadController extends BaseController<LocalidadDTO, Long> {
         initController(new LocalidadDTO(),
                 "Listado Localidades",
                 "Gestión de Localidad",
-                "view/usuario/Menu/direccion/");
+                "view/admin/Menu/direccion/");
     }
 
     @Override

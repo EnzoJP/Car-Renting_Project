@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/nacionalidad")
+@RequestMapping("/admin/nacionalidad")
 public class NacionalidadController extends BaseController<NacionalidadDTO, Long> {
 
     @Autowired
@@ -15,6 +15,9 @@ public class NacionalidadController extends BaseController<NacionalidadDTO, Long
 
     public NacionalidadController(NacionalidadService service) {
         super(service);
-        initController(new NacionalidadDTO(), "LIST NACIONALIDAD", "EDIT NACIONALIDAD");
+        initController(new NacionalidadDTO(),
+                "LIST NACIONALIDAD",
+                "EDIT NACIONALIDAD",
+                "view/admin/Menu/utils/");
     }
 }

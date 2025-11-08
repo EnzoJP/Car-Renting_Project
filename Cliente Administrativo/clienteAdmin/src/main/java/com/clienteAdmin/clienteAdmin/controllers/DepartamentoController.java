@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/usuario/departamento")
+@RequestMapping("/admin/departamento")
 public class DepartamentoController extends BaseController<DepartamentoDTO, Long> {
 
     @Autowired
@@ -25,7 +25,7 @@ public class DepartamentoController extends BaseController<DepartamentoDTO, Long
         initController(new DepartamentoDTO(),
                 "Listado Departamentos",
                 "Gestión de Departamento",
-                "view/usuario/Menu/direccion/");
+                "view/admin/Menu/direccion/");
     }
 
     @Override

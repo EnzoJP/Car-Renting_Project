@@ -34,6 +34,8 @@ public class Alquiler extends BaseEntity<Long> {
     @ManyToOne
     private Documentacion documentacion;
 
+    private Double costo;
+
     @Override
     public Long getId() {
         return this.id;

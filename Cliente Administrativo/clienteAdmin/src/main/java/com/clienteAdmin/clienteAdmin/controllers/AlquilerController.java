@@ -1,10 +1,13 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
 import com.clienteAdmin.clienteAdmin.DTO.AlquilerDTO;
+import com.clienteAdmin.clienteAdmin.DTO.CostoVehiculoDTO;
 import com.clienteAdmin.clienteAdmin.DTO.DocumentacionDTO;
+import com.clienteAdmin.clienteAdmin.DTO.VehiculoDTO;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import com.clienteAdmin.clienteAdmin.services.AlquilerService;
 import com.clienteAdmin.clienteAdmin.services.ClienteService;
+import com.clienteAdmin.clienteAdmin.services.CostoVehiculoService;
 import com.clienteAdmin.clienteAdmin.services.VehiculoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Controller
@@ -28,11 +34,11 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
     @Autowired
     private VehiculoService vehiculoService;
 
-    private final AlquilerService alquilerService;
+    @Autowired
+    private CostoVehiculoService costoVehiculoService;
 
     public AlquilerController(AlquilerService service) {
         super(service);
-        this.alquilerService = service;
         initController(new AlquilerDTO(),
                 "Listado de Alquileres",
                 "Gestión de Alquiler",
@@ -55,6 +61,11 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
         preAlta();
     }
 
+    // Helper para normalizar strings (marca/modelo)
+    private String normalize(String s) {
+        return s == null ? "" : s.trim().toLowerCase();
+    }
+
     // un solo archivo contiene toda la documentación necesaria
     @Override
     @PostMapping("/actualizar")
@@ -75,6 +86,45 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
             }
 
             if (entidad.getId() == null) {
+                // Cargar el vehículo completo si solo tiene id
+                if (entidad.getVehiculo() != null && entidad.getVehiculo().getId() != null) {
+                    VehiculoDTO veh = vehiculoService.obtener(entidad.getVehiculo().getId());
+                    entidad.setVehiculo(veh);
+                }
+
+                // Calcular costo
+                if (entidad.getVehiculo() != null && entidad.getVehiculo().getCaracteristicaVehiculo() != null
+                        && entidad.getFechaDesde() != null && entidad.getFechaHasta() != null) {
+                    long dias = ChronoUnit.DAYS.between(
+                        entidad.getFechaDesde().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
+                        entidad.getFechaHasta().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+                    );
+
+                    // preparar datos para comparación
+                    Long caracteristicaId = entidad.getVehiculo().getCaracteristicaVehiculo().getId();
+                    String marcaNorm = normalize(entidad.getVehiculo().getCaracteristicaVehiculo().getMarca());
+                    String modeloNorm = normalize(entidad.getVehiculo().getCaracteristicaVehiculo().getModelo());
+
+                    double costoDiario = costoVehiculoService.listarActivos().stream()
+                        .filter(cv -> {
+                            if (cv.getCaracteristicaVehiculo() == null) return false;
+                            // si existe id en ambas, compararlo
+                            if (caracteristicaId != null && cv.getCaracteristicaVehiculo().getId() != null) {
+                                return Objects.equals(cv.getCaracteristicaVehiculo().getId(), caracteristicaId);
+                            }
+                            // fallback: comparar marca+modelo normalizados
+                            String cvMarca = normalize(cv.getCaracteristicaVehiculo().getMarca());
+                            String cvModelo = normalize(cv.getCaracteristicaVehiculo().getModelo());
+                            return cvMarca.equals(marcaNorm) && cvModelo.equals(modeloNorm);
+                        })
+                        .findFirst()
+                        .map(CostoVehiculoDTO::getCosto)
+                        .orElse(0.0);
+                    entidad.setCosto(dias * costoDiario);
+                } else {
+                    entidad.setCosto(0.0); // O manejar el error mostrando mensaje
+                }
+
                 service.alta(entidad);
                 if (entidad.getVehiculo() != null && entidad.getVehiculo().getId() != null) {
                     vehiculoService.cambiarEstado(entidad.getVehiculo().getId(), "ALQUILADO");

@@ -17,4 +17,5 @@ public class AlquilerDTO implements Identifiable<Long> {
     private ClienteDTO cliente;
     private VehiculoDTO vehiculo;
     private DocumentacionDTO documentacion;
+    private double costo;
 }

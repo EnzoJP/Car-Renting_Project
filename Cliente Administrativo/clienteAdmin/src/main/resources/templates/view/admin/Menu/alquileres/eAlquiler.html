@@ -84,7 +84,7 @@
 
                                     <div class="mb-3">
                                         <label for="file" class="form-label">Documentación (DNI y Carnet) <span class="text-danger">*</span></label>
-                                        <input class="form-control" type="file" id="file" name="file" th:disabled="${isDisabled}" accept=".pdf,.doc,.docx" th:required="${item.id == null}">
+                                        <input class="form-control" type="file" id="file" name="file" th:disabled="${isDisabled}" accept=".pdf,.doc,.docx" >
                                         <div class="form-text">Subir un solo archivo PDF o Word que contenga el DNI y el Carnet de Conducir. (Requerido para alquileres nuevos)</div>
 
                                         <div th:if="${item.id != null && item.documentacion != null}" class="mt-2">

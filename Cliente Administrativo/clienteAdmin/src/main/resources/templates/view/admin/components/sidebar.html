@@ -12,7 +12,7 @@
 
                     <div class="sb-sidenav-menu-heading">Gestión</div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsuario" aria-expanded="false" aria-controls="collapseUsuario">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsuario" aria-expanded="false" aria-controls="#collapseUsuario">
                         <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                         Usuario
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -24,7 +24,7 @@
                         </nav>
                     </div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDireccion" aria-expanded="false" aria-controls="collapseDireccion">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDireccion" aria-expanded="false" aria-controls="#collapseDireccion">
                         <div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
                         Dirección
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -37,7 +37,7 @@
                         </nav>
                     </div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVehiculo" aria-expanded="false" aria-controls="collapseVehiculo">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVehiculo" aria-expanded="false" aria-controls="#collapseVehiculo">
                         <div class="sb-nav-link-icon"><i class="fas fa-car"></i></div>
                         Vehículo
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -50,7 +50,7 @@
                         </nav>
                     </div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAlquiler" aria-expanded="false" aria-controls="collapseAlquiler">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAlquiler" aria-expanded="false" aria-controls="#collapseAlquiler">
                         <div class="sb-nav-link-icon"><i class="fas fa-file-invoice-dollar"></i></div>
                         Alquileres
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -69,7 +69,8 @@
                         PDF Clientes
                     </a>
 
-                    <a class="nav-link" th:href="@{/generar-excel.xlsx}" target="_blank">
+
+                    <a class="nav-link" th:href="@{/generar-excel.xlsx}" target="_blank" id="excelLink">
                         <div class="sb-nav-link-icon"><i class="fas fa-file-excel"></i></div>
                         Excel Alquileres
                     </a>
@@ -83,4 +84,6 @@
             </div>
         </nav>
     </div>
+
+
 </div>

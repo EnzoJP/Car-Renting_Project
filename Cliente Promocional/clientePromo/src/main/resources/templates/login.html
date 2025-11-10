@@ -2,37 +2,323 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${titulo}">Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${titulo}">Login - Sprint Solutions</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="icon" th:href="@{/images/fevicon.png}" type="image/gif">
+
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(135deg, #fe5b29 0%, #363636 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 100%;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container img {
+            max-width: 120px;
+            height: auto;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-header h1 {
+            color: #363636;
+            font-weight: 800;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 15px;
+            margin: 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #363636;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.3s;
+            font-family: 'Raleway', sans-serif;
+        }
+
+        .form-control:focus {
+            border-color: #fe5b29;
+            box-shadow: 0 0 0 0.2rem rgba(254, 91, 41, 0.15);
+            outline: none;
+        }
+
+        .form-icon {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            color: #999;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, #fe5b29 0%, #ff7b50 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(254, 91, 41, 0.4);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            color: #666;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .btn-social {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 600;
+            color: #363636;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            text-decoration: none;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .btn-social img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .btn-social:hover {
+            border-color: #fe5b29;
+            box-shadow: 0 5px 20px rgba(254, 91, 41, 0.15);
+            transform: translateY(-2px);
+            color: #363636;
+            text-decoration: none;
+        }
+
+        .btn-google {
+            border-color: #4285f4;
+        }
+
+        .btn-google:hover {
+            background: #4285f4;
+            color: white;
+            border-color: #4285f4;
+        }
+
+        .btn-facebook {
+            border-color: #1877f2;
+        }
+
+        .btn-facebook:hover {
+            background: #1877f2;
+            color: white;
+            border-color: #1877f2;
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-danger {
+            background-color: #ffe5e5;
+            border: 1px solid #ffcccc;
+            color: #c70000;
+        }
+
+        .back-home {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .back-home a {
+            color: #fe5b29;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-home a:hover {
+            color: #363636;
+            text-decoration: underline;
+        }
+
+        .back-home a i {
+            margin-right: 5px;
+        }
+
+        @media (max-width: 575px) {
+            .login-wrapper {
+                padding: 35px 25px;
+            }
+
+            .login-header h1 {
+                font-size: 26px;
+            }
+
+            .btn-social {
+                font-size: 14px;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1 th:text="${titulo}"></h1>
+<div class="login-wrapper">
+    <!-- Logo -->
+    <div class="logo-container">
+        <a th:href="@{/inicio}">
+            <img th:src="@{/images/logo_2.png}" alt="Sprint Solutions Logo">
+        </a>
+    </div>
 
+    <!-- Header -->
+    <div class="login-header">
+        <h1>Iniciar Sesión</h1>
+        <p>Bienvenido a Sprint Solutions</p>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <i class="fa fa-exclamation-circle"></i>
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Login Form -->
     <form th:action="@{/login}" method="post">
-        <label for="username">Usuario:</label>
-        <input type="text" id="username" name="username" required><br>
+        <div class="form-group">
+            <label for="username">Usuario</label>
+            <input type="text" class="form-control" id="username" name="username" required placeholder="Ingresa tu usuario">
+            <i class="fa fa-user form-icon"></i>
+        </div>
 
-        <label for="password">Contraseña:</label>
-        <input type="password" id="password" name="password" required><br>
+        <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" required placeholder="Ingresa tu contraseña">
+            <i class="fa fa-lock form-icon"></i>
+        </div>
 
-        <button type="submit">Iniciar Sesión</button>
+        <button type="submit" class="btn-login">Iniciar Sesión</button>
     </form>
+
+    <!-- Divider -->
     <div class="divider">
         <span>O continuar con</span>
     </div>
-    <a href="http://localhost:9000/oauth2/authorization/google" class="btn-google">
+
+    <!-- Social Login Buttons -->
+    <a href="http://localhost:9000/oauth2/authorization/google" class="btn-social btn-google">
         <img src="https://www.google.com/favicon.ico" alt="Google">
         Continuar con Google
     </a>
-    <a href="http://localhost:9000/oauth2/authorization/facebook" class="btn-facebook">
+
+    <a href="http://localhost:9000/oauth2/authorization/facebook" class="btn-social btn-facebook">
         <img src="https://www.facebook.com/favicon.ico" alt="Facebook">
         Continuar con Facebook
     </a>
 
-    <p th:if="${error}" th:text="${error}" style="color:red;"></p>
-
+    <!-- Back to Home -->
     <div class="back-home">
-        <a th:href="@{/inicio}">← Volver al inicio</a>
+        <a th:href="@{/inicio}">
+            <i class="fa fa-arrow-left"></i>
+            Volver al inicio
+        </a>
     </div>
-
+</div>
 </body>
 </html>

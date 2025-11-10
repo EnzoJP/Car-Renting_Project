@@ -1,5 +1,6 @@
 package com.clientePromo.clientePromo.controllers;
 
+import com.clientePromo.clientePromo.DTO.UsuarioDTO;
 import com.clientePromo.clientePromo.auth.AuthService;
 import com.clientePromo.clientePromo.models.WeatherResponse;
 import com.clientePromo.clientePromo.services.DolarService;
@@ -72,7 +73,19 @@ public class InicioController {
     // Endpoint para recibir token de google
     @GetMapping("/login-success")
     public String loginSuccess(@RequestParam String token, Model model) {
-        authService.setToken(token);//busca perfil
+        // Guardar el token
+        authService.setToken(token);
+        // Obtener usuario autenticado
+        UsuarioDTO usuario = authService.getUsuarioAutenticado();
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+        // Verificar si completó el perfil
+        if (usuario.getFechaNacimiento() == null ||
+                usuario.getNumeroDocumento() == null) {
+            return "redirect:/completar-perfil";
+        }
+        // Perfil completo
         return "redirect:/cliente/dashboard";
     }
 

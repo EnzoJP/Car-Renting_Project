@@ -8,4 +8,6 @@ public class ContactoDTO implements Identifiable<Long> {
     private Long id;
     private String tipoContacto;
     private String observacion;
+    private PersonaDTO persona;
+
 }

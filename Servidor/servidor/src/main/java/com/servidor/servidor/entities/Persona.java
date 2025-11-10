@@ -1,5 +1,6 @@
 package com.servidor.servidor.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.servidor.servidor.enums.TipoDocumento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,8 +27,8 @@ public class Persona extends BaseEntity<Long> {
     private TipoDocumento tipoDocumento;
     private String numeroDocumento;
 
-    @ManyToOne
-    private Contacto contacto;
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Contacto> contactos = new ArrayList<>();
 
     @ManyToOne
     private Direccion direccion;

@@ -16,19 +16,17 @@ import java.util.List;
 @Controller
 public class InicioController {
 
-    @Autowired
     private final AuthService authService;
+    private final WeatherService weatherService;
+    private final DolarService dolarService;
 
+    // ¡CORREGIDO! Constructor para inyectar TODOS los servicios
     @Autowired
-    private WeatherService weatherService;
-
-    @Autowired
-    private DolarService dolarService;
-
-    public InicioController(AuthService authService) {
+    public InicioController(AuthService authService, WeatherService weatherService, DolarService dolarService) {
         this.authService = authService;
+        this.weatherService = weatherService;
+        this.dolarService = dolarService;
     }
-
 
     @GetMapping({"/", "/inicio"})
     public String inicio(Model model) {
@@ -36,9 +34,9 @@ public class InicioController {
         // Cargar dólar
         List<String> dolarData = dolarService.obtenerCompraVentaFecha();
         if (dolarData != null && dolarData.size() >= 2) {
-            model.addAttribute("compra", dolarData.get(0));
+            // model.addAttribute("compra", dolarData.get(0));
             model.addAttribute("venta", dolarData.get(1));
-            model.addAttribute("fecha", dolarData.size() > 2 ? dolarData.get(2) : "");
+            // model.addAttribute("fecha", dolarData.size() > 2 ? dolarData.get(2) : "");
         }
 
         // Cargar clima
@@ -64,7 +62,7 @@ public class InicioController {
         boolean success = authService.login(username, password);
 
         if (success) {
-            return "redirect:/home";
+            return "redirect:/cliente/dashboard";
         } else {
             model.addAttribute("error", "Credenciales inválidas");
             return "login";
@@ -74,13 +72,8 @@ public class InicioController {
     // Endpoint para recibir token de google
     @GetMapping("/login-success")
     public String loginSuccess(@RequestParam String token, Model model) {
-        authService.setToken(token);
-        return "redirect:/home";
+        authService.setToken(token);//busca perfil
+        return "redirect:/cliente/dashboard";
     }
 
-    @GetMapping("/home")
-    public String home(Model model) {
-        model.addAttribute("titulo", "Bienvenido al Sistema");
-        return "home";
-    }
 }

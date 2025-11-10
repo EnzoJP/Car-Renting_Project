@@ -5,11 +5,16 @@ import com.servidor.servidor.exceptions.ErrorServiceException;
 import com.servidor.servidor.repositories.AlquilerRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AlquilerService extends BaseService<Alquiler, Long> {
 
+    private final AlquilerRepository alquilerRepository;
+
     public AlquilerService(AlquilerRepository repository) {
         super(repository);
+        this.alquilerRepository = repository;
     }
 
     @Override
@@ -29,5 +34,10 @@ public class AlquilerService extends BaseService<Alquiler, Long> {
         } catch (Exception e) {
             throw new ErrorServiceException("Error de Sistemas");
         }
+    }
+
+    // para el dashboard cliente
+    public List<Alquiler> obtenerAlquileresPorCliente(Long idCliente) {
+        return alquilerRepository.findByClienteId(idCliente);
     }
 }

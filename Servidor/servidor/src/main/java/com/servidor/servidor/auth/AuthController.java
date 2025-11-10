@@ -1,12 +1,15 @@
 package com.servidor.servidor.auth;
 
+import com.servidor.servidor.entities.Usuario;
+import com.servidor.servidor.enums.RolUsuario;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,4 +30,18 @@ public class AuthController {
 
         return ResponseEntity.ok(authService.register(request));
     }
+
+    @GetMapping(value = "/perfil")
+    public ResponseEntity<Map<String, Object>> getPerfil(Authentication authentication)
+    {
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+
+        Map<String, Object> perfil = new HashMap<>();
+        perfil.put("id", usuario.getId());
+        perfil.put("username", usuario.getUsername());
+        perfil.put("rol", usuario.getRol());
+
+        return ResponseEntity.ok(perfil);
+    }
+
 }

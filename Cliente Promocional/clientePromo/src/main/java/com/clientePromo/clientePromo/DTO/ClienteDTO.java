@@ -21,4 +21,6 @@ public class ClienteDTO implements Identifiable<Long> {
     private ImagenDTO imagen;
     private String direccionEstadia;
     private NacionalidadDTO nacionalidad;
+    // para poder realizar las vistas
+    private Double saldoPendiente;
 }

@@ -1,10 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <style>
+        .nav-info-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 15px;
+            font-size: 13px;
+            color: #ffffff;
+            white-space: nowrap;
+        }
+
+        .nav-info-item i {
+            font-size: 14px;
+            color: #44c14a;
+        }
+
+        .nav-info-item strong {
+            color: #fbfbfb;
+            font-weight: 600;
+        }
+
+        @media (max-width: 991px) {
+            .nav-info-item {
+                margin: 5px 0;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-$END$
+
+<nav th:fragment="nav_bar_cliente" class="header_section">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <!-- Logo -->
+            <a class="navbar-brand" th:href="@{/cliente/dashboard}">
+                <img th:src="@{/images/logo.png}" alt="Logo Sprint">
+            </a>
+
+            <!-- Botón toggle para móvil -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Menú central -->
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" th:href="@{/cliente/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#alquileres">Mis Alquileres</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pagos">Mis Pagos</a>
+                    </li>
+                </ul>
+
+                <!-- Dólar, Clima y Logout a la derecha -->
+                <ul class="navbar-nav ml-auto align-items-center">
+                    <!-- Dólar Blue -->
+                    <li class="nav-item mr-2">
+                        <span class="nav-info-item">
+                            <i class="fa fa-dollar"></i>
+                            <span id="dolarText">
+                                <span th:if="${venta != null}">
+                                    Blue: <strong th:text="'$' + ${venta}">$0</strong>
+                                </span>
+                                <small th:unless="${venta != null}" class="text-muted">N/A</small>
+                            </span>
+                        </span>
+                    </li>
+
+                    <!-- Clima -->
+                    <li class="nav-item mr-3">
+                        <span class="nav-info-item">
+                            <i class="fa fa-cloud"></i>
+                            <span id="climaText">
+                                <span th:if="${weather != null}">
+                                    <strong th:text="${weather.main.temp} + '°C'">--°C</strong>
+                                </span>
+                                <small th:unless="${weather != null}" class="text-muted">N/A</small>
+                            </span>
+                        </span>
+                    </li>
+
+                    <!-- Cerrar Sesión -->
+                    <li class="nav-item">
+                        <a class="nav-link btn-login" th:href="@{/logout}">
+                            <i class="fa fa-sign-out" aria-hidden="true"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+</nav>
+
 </body>
 </html>

@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClienteService extends BaseService<Cliente, Long> {
 
+    private final ClienteRepository clienteRepository;
+
     public ClienteService(ClienteRepository repository) {
         super(repository);
+        this.clienteRepository = repository;
     }
 
     @Override
@@ -32,5 +35,9 @@ public class ClienteService extends BaseService<Cliente, Long> {
         } catch (Exception e) {
             throw new ErrorServiceException("Error de Sistemas");
         }
+    }
+     // para vista de dashboard
+    public Cliente findByUsuarioId(Long usuarioId) {
+        return clienteRepository.findByUsuarioId(usuarioId);
     }
 }

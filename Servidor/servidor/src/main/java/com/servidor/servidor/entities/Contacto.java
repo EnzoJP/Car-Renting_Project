@@ -1,10 +1,9 @@
 package com.servidor.servidor.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.servidor.servidor.enums.TipoContacto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +18,12 @@ import lombok.Setter;
 public class Contacto extends BaseEntity<Long> {
     private TipoContacto tipoContacto;
     private String observacion;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "persona_id")
+    @JsonIgnoreProperties({"contactos", "direccion", "imagen", "usuarios"})
+    private Persona persona;
+
 
 
     @Override

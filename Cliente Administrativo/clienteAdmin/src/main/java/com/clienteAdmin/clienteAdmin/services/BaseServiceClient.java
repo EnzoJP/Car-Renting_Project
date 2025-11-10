@@ -2,6 +2,7 @@ package com.clienteAdmin.clienteAdmin.services;
 
 
 import com.clienteAdmin.clienteAdmin.auth.AuthService;
+import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -71,5 +72,11 @@ public abstract class BaseServiceClient<T, ID> {
         HttpEntity<Void> entity = new HttpEntity<>(authService.authHeaders());
         restTemplate.exchange(apiUrl + "/" + id, HttpMethod.DELETE, entity, Void.class);
     }
+
+    protected void validar(T entidad) throws ErrorServiceException {}
+    protected void preAlta(T entidad) throws ErrorServiceException {}
+    protected void postAlta(T entidad)throws ErrorServiceException {}
+    protected void preModificacion(T entidad)throws ErrorServiceException {}
+    protected void preBaja(ID id)throws ErrorServiceException {}
 }
 

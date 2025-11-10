@@ -1,0 +1,83 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="favicon.ico">
+
+    <title th:text="${titleList}"></title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/jumbotron.css}" rel="stylesheet">
+    <link th:href="@{/css/sticky-footer-navbar.css}" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" rel="stylesheet">
+</head>
+
+<body>
+
+<header th:insert="~{components/menubody :: menu-principal}"></header>
+
+<main role="main">
+    <hr>
+    <div class="container">
+
+        <div class="card">
+            <h4 class="card-header">
+                <strong th:text="${titleList}"></strong>
+            </h4>
+            <div class="card-body">
+
+                <a class="btn btn-primary" th:href="@{'/' + ${nameEntityLower} + '/alta'}" role="button">
+                    <i class="fa fa-plus"></i> Nuevo Teléfono
+                </a>
+
+                <hr>
+                <div th:if="${msgExito}" class='alert alert-success' th:text="${msgExito}" role='alert'></div>
+                <div th:if="${msgError}" class='alert alert-danger' th:text="${msgError}" role='alert'></div>
+
+                <table class="table table-hover">
+                    <thead class="thead-light">
+                    <tr>
+                        <th>Acciones</th>
+                        <th>Teléfono</th>
+                        <th>Persona</th>
+                        <th>Tipo de Teléfono</th>
+                        <th>Tipo de Contacto</th>
+                        <th>Observación</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item : ${items}">
+                        <td>
+                            <a th:href="@{'/' + ${nameEntityLower} + '/consultar/' + ${item.id}}" class="btn btn-success btn-sm" title="Ver"><i class="fas fa-eye"></i></a>
+                            <a th:href="@{'/' + ${nameEntityLower} + '/modificar/' + ${item.id}}" class="btn btn-success btn-sm" title="Editar"><i class="fas fa-pencil-alt"></i></a>
+                            <a th:href="@{'/' + ${nameEntityLower} + '/baja/' + ${item.id}}" class="btn btn-success btn-sm confirmar" title="Eliminar"><i class="fas fa-trash"></i></a>
+                        </td>
+                        <td th:text="${item.telefono}"></td>
+                        <td th:text="${item.persona != null ? item.persona.nombre + ' ' + item.persona.apellido : '—'}"></td>
+                        <td th:text="${item.tipoTelefono}"></td>
+                        <td th:text="${item.tipoContacto}"></td>
+                        <td th:text="${item.observacion}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:insert="~{components/footer :: footer}" class="footer"></footer>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+
+<script>
+    var dialogoConfirm = function (e) {
+        if (!confirm('¿Está seguro de eliminar la información?'))
+            e.preventDefault();
+    };
+    document.querySelectorAll('.confirmar').forEach(el => el.addEventListener('click', dialogoConfirm, false));
+</script>
+
+</body>
+</html>

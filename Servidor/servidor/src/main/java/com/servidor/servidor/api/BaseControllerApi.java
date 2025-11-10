@@ -62,10 +62,18 @@ public abstract class BaseControllerApi<T extends BaseEntity<ID>, ID> {
             T guardado = service.alta(entidad);
             postCreate(guardado);
             return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+
         } catch (ErrorServiceException e) {
+            System.out.println("----- ERROR DE SERVICIO (API) -----");
+            e.printStackTrace();
+            System.out.println("-----------------------------------");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse(e.getMessage()));
+
         } catch (Exception e) {
+            System.out.println("----- ERROR INTERNO (API) -----");
+            e.printStackTrace();
+            System.out.println("-------------------------------");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorResponse("Error al crear la entidad"));
         }

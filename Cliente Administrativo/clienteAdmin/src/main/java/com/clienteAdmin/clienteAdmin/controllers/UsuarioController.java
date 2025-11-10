@@ -53,19 +53,35 @@ public class UsuarioController extends BaseController<UsuarioDTO, Long> {
         String viewName = "view/admin/Menu/usuarios/cambiarClave";
         model.addAttribute("titulo", "Cambiar Contraseña");
 
+        // validar que las contraseñas coincidan
         if (!passwordNueva.equals(passwordConfirm)) {
             model.addAttribute("error", "Las nuevas contraseñas no coinciden.");
             return viewName;
         }
 
-        String username;
-        try {
-            username = ((UserDetails) authentication.getPrincipal()).getUsername();
-        } catch (Exception e) {
-            model.addAttribute("error", "No se pudo identificar al usuario logueado.");
+        String username = null;
+
+        if (authentication == null || authentication.getPrincipal() == null) {
+            model.addAttribute("error", "No se pudo identificar al usuario logueado (sesión no encontrada).");
             return viewName;
         }
 
+        // obetner el usuario
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else if (principal instanceof String) {
+            username = (String) principal;
+        } else {
+            model.addAttribute("error", "No se pudo identificar al usuario logueado (tipo de usuario desconocido).");
+            return viewName;
+        }
+
+        if (username == null || "anonymousUser".equals(username)) {
+            model.addAttribute("error", "No se pudo identificar al usuario logueado (sesión anónima).");
+            return viewName;
+        }
         try {
             usuarioService.cambiarClave(username, passwordActual, passwordNueva);
             redirectAttributes.addFlashAttribute("success", "Contraseña actualizada con éxito.");

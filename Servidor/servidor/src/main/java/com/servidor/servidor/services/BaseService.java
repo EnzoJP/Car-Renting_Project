@@ -28,7 +28,10 @@ public abstract class BaseService<T extends BaseEntity<ID>, ID> {
             return guardado;
 
         }catch(Exception e) {
-            throw new ErrorServiceException("Error de Sistemas");
+            System.out.println("----- ERROR REAL DE BASE DE DATOS -----");
+            e.printStackTrace();
+            System.out.println("---------------------------------------");
+            throw new ErrorServiceException(e.getMessage());
         }
     }
 

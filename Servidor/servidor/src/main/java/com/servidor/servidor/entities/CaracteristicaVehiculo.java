@@ -1,5 +1,6 @@
 package com.servidor.servidor.entities;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ public class CaracteristicaVehiculo extends BaseEntity<Long> {
     private int cantidadTotalVehiculo;
     private int cantidadVehiculoAlquilado;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Imagen imagen;
 
     @Override

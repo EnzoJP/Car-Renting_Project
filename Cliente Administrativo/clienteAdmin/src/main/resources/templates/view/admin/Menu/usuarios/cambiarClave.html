@@ -25,7 +25,7 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4" th:text="${titulo}">Cambiar Contraseña</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a th:href="@{/usuario/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
                     <li class="breadcrumb-item"><a th:href="@{/admin/usuarios/menu}">Usuarios</a></li>
                     <li class="breadcrumb-item active">Cambiar Clave</li>
                 </ol>
@@ -50,6 +50,7 @@
                                 </div>
 
                                 <form th:action="@{/admin/usuarios/clave}" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                     <div class="mb-3">
                                         <label for="passwordActual" class="form-label">Clave Actual</label>
                                         <input type="password" class="form-control" id="passwordActual" name="passwordActual" required>

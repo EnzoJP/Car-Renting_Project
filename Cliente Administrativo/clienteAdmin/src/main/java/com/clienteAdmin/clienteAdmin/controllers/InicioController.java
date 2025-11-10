@@ -5,7 +5,12 @@ import com.clienteAdmin.clienteAdmin.DTO.VehiculoDTO;
 import com.clienteAdmin.clienteAdmin.auth.AuthService;
 import com.clienteAdmin.clienteAdmin.services.AlquilerService;
 import com.clienteAdmin.clienteAdmin.services.VehiculoService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,15 +52,40 @@ public class InicioController {
     public String login(
             @RequestParam String username,
             @RequestParam String password,
+            HttpServletRequest request,
             Model model) {
 
         boolean success = authService.login(username, password);
+
         if (success) {
+            // CRÍTICO: Persistir el SecurityContext en la sesión
+            HttpSession session = request.getSession(true);
+            SecurityContext context = SecurityContextHolder.getContext();
+            session.setAttribute(
+                    HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    context
+            );
+
+            System.out.println("Login exitoso para: " + username);
+            System.out.println(" Autenticación: " + context.getAuthentication());
+            System.out.println("Authorities: " + context.getAuthentication().getAuthorities());
+
             return "redirect:/admin/dashboard";
         } else {
+            System.out.println(" Login fallido para: " + username);
             model.addAttribute("error", "Credenciales inválidas");
             return "login";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        authService.logout();
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "redirect:/login?logout";
     }
 
     // Home protegido (seria el dashboard)

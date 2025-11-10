@@ -25,7 +25,6 @@ public class CaracteristicaVehiculoController extends BaseController<Caracterist
                 "view/admin/Menu/vehiculos/");
     }
 
-
     @Override
     @PostMapping("/actualizar")
     public String actualizar(@ModelAttribute("item") CaracteristicaVehiculoDTO entidad,
@@ -56,9 +55,17 @@ public class CaracteristicaVehiculoController extends BaseController<Caracterist
 
         } catch (ErrorServiceException e) {
             model.addAttribute("msgError", e.getMessage());
+
+            model.addAttribute("titleEdit", this.titleEdit);
+            model.addAttribute("isDisabled", false);
+
             return viewEdit;
+
         } catch (Exception e) {
             model.addAttribute("msgError", "Error de Sistema: " + e.getMessage());
+
+            model.addAttribute("titleEdit", this.titleEdit);
+            model.addAttribute("isDisabled", false);
             return viewEdit;
         }
     }

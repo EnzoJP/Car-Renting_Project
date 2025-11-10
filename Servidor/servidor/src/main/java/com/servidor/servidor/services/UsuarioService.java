@@ -4,7 +4,12 @@ import com.servidor.servidor.entities.Contacto;
 import com.servidor.servidor.entities.Usuario;
 import com.servidor.servidor.exceptions.ErrorServiceException;
 import com.servidor.servidor.repositories.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -12,8 +17,71 @@ import java.util.Optional;
 @Service
 public class UsuarioService extends BaseService<Usuario, Long> {
 
-    public UsuarioService(UsuarioRepository repository) {
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
         super(repository);
+        this.usuarioRepository = repository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * Cambia la contraseña de un usuario
+     *
+     * @param username El username del usuario
+     * @param claveActual La contraseña actual (para verificar)
+     * @param claveNueva La nueva contraseña
+     * @throws ErrorServiceException Si la contraseña actual no coincide o el usuario no existe
+     */
+
+    @Transactional
+    public void cambiarClave(String username, String claveActual, String claveNueva)
+            throws ErrorServiceException {
+
+        try {
+            System.out.println("🔄 Procesando cambio de clave para: " + username);
+
+            // Buscar el usuario por username
+            Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(username);
+
+            if (usuarioOpt.isEmpty()) {
+                System.out.println(" Usuario no encontrado: " + username);
+                throw new ErrorServiceException("Usuario no encontrado");
+            }
+
+            Usuario usuario = usuarioOpt.get();
+
+            // Verificar que la contraseña actual sea correcta
+            if (!passwordEncoder.matches(claveActual, usuario.getPassword())) {
+                System.out.println(" Contraseña actual incorrecta para: " + username);
+                throw new ErrorServiceException("La contraseña actual es incorrecta");
+            }
+
+            // Validar que la nueva contraseña no esté vacía
+            if (claveNueva == null || claveNueva.trim().isEmpty()) {
+                throw new ErrorServiceException("La nueva contraseña no puede estar vacía");
+            }
+            if (claveNueva.length() < 3) {
+                throw new ErrorServiceException("La contraseña debe tener al menos 3 caracteres");
+            }
+
+            // Encriptar y guardar la nueva contraseña
+            String claveEncriptada = passwordEncoder.encode(claveNueva);
+            usuario.setPassword(claveEncriptada);
+
+            usuarioRepository.save(usuario);
+
+            System.out.println("Contraseña actualizada exitosamente para: " + username);
+
+        } catch (ErrorServiceException e) {
+            throw e;
+        } catch (Exception e) {
+            System.err.println("Error al cambiar clave: " + e.getMessage());
+            e.printStackTrace();
+            throw new ErrorServiceException("Error al cambiar la contraseña: " + e.getMessage());
+        }
     }
 
     @Override
@@ -112,6 +180,19 @@ public class UsuarioService extends BaseService<Usuario, Long> {
             throw e;
         } catch (Exception e) {
             throw new ErrorServiceException("Error de Sistemas");
+        }
+    }
+
+    @Override
+    protected void preAlta(Usuario usuario) throws ErrorServiceException {
+        try {
+            if (usuario.getPassword() != null && !usuario.getPassword().isEmpty()) {
+                String claveEncriptada = passwordEncoder.encode(usuario.getPassword());
+                usuario.setPassword(claveEncriptada);
+                System.out.println("Contraseña encriptada para nuevo usuario: " + usuario.getUsername());
+            }
+        } catch (Exception e) {
+            throw new ErrorServiceException("Error al procesar la contraseña");
         }
     }
 }

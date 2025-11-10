@@ -25,9 +25,9 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4" th:text="${titleEdit}">Gestión de Localidad</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a th:href="@{/usuario/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/usuario/direccion/menu}">Direcciones</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/usuario/localidad/list}">Localidades</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/direccion/menu}">Direcciones</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/localidad/list}">Localidades</a></li>
                     <li class="breadcrumb-item active" th:text="${item.id == null ? 'Nueva' : 'Editar'}">Formulario</li>
                 </ol>
 
@@ -50,7 +50,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>
 
-                                <form th:action="@{/usuario/localidad/actualizar}" method="post" th:object="${item}">
+                                <form th:action="@{/admin/localidad/actualizar}" method="post" th:object="${item}">
                                     <input type="hidden" name="id" th:field="*{id}" />
 
                                     <div class="mb-3">
@@ -145,7 +145,7 @@
                                             <i class="fas fa-save me-1"></i> Guardar
                                         </button>
                                         <a class="btn btn-secondary"
-                                           th:href="@{/usuario/localidad/cancelar}"
+                                           th:href="@{/admin/localidad/cancelar}"
                                            role="button">
                                             <i class="fas fa-times me-1"></i>
                                             <span th:text="${isDisabled ? 'Volver' : 'Cancelar'}">Cancelar</span>

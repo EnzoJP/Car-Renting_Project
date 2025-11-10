@@ -26,8 +26,8 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4" th:text="${titleList}">Listado de Provincias</h1>
                 <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item"><a th:href="@{/usuario/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/usuario/direccion/menu}">Direcciones</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/admin/direccion/menu}">Direcciones</a></li>
                     <li class="breadcrumb-item active">Provincias</li>
                 </ol>
 
@@ -51,7 +51,7 @@
 
                         <!-- Botón Alta -->
                         <div class="mb-3">
-                            <a class="btn btn-primary" th:href="@{/usuario/provincia/alta}" role="button">
+                            <a class="btn btn-primary" th:href="@{/admin/provincia/alta}" role="button">
                                 <i class="fa fa-plus me-1"></i> Nueva Provincia
                             </a>
                         </div>
@@ -69,17 +69,17 @@
                             <tr th:each="item : ${items}">
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a th:href="@{/usuario/provincia/consultar/{id}(id=${item.id})}"
+                                        <a th:href="@{/admin/provincia/consultar/{id}(id=${item.id})}"
                                            class="btn btn-sm btn-info"
                                            title="Consultar">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <a th:href="@{/usuario/provincia/modificar/{id}(id=${item.id})}"
+                                        <a th:href="@{/admin/provincia/modificar/{id}(id=${item.id})}"
                                            class="btn btn-sm btn-warning"
                                            title="Modificar">
                                             <i class="fas fa-pencil-alt"></i>
                                         </a>
-                                        <a th:href="@{/usuario/provincia/baja/{id}(id=${item.id})}"
+                                        <a th:href="@{/admin/provincia/baja/{id}(id=${item.id})}"
                                            class="btn btn-sm btn-danger confirmar"
                                            title="Eliminar">
                                             <i class="fas fa-trash"></i>

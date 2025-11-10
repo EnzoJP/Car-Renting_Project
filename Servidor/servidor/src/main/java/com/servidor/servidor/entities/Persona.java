@@ -27,7 +27,7 @@ public class Persona extends BaseEntity<Long> {
     private TipoDocumento tipoDocumento;
     private String numeroDocumento;
 
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Contacto> contactos = new ArrayList<>();
 
     @ManyToOne

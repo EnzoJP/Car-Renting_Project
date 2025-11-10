@@ -1,6 +1,7 @@
 package com.servidor.servidor.entities;
 
 import com.servidor.servidor.enums.RolUsuario;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -24,6 +25,13 @@ public class Usuario extends Persona implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private RolUsuario rol;
+
+    private String provider; // "GOOGLE", "FACEBOOK", "LOCAL"
+    private String providerId; // ID único del proveedor
+    private String pictureUrl; // URL de la imagen de perfil o de google o de facebook
+
+    @Column(nullable = true)
+    private Boolean perfilCompleto = false;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

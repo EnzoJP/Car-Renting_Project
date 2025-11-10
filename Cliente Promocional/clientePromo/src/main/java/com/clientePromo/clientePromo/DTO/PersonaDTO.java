@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,7 +17,7 @@ public class PersonaDTO implements Identifiable<Long> {
     private Date fechaNacimiento;
     private String tipoDocumento;
     private String numeroDocumento;
-    private ContactoDTO contacto;
+    private List<ContactoDTO> contactos;
     private DireccionDTO direccion;
     private ImagenDTO imagen;
 }

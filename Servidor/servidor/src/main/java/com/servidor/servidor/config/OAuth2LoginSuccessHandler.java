@@ -17,7 +17,9 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -31,57 +33,143 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private String redirectBaseUrl;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request,
-                                        HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        // Obtener información del usuario desde OAuth2User
+        String registrationId = getRegistrationId(request); // obtener proveedor
         String email = oAuth2User.getAttribute("email");
-        String nombre = oAuth2User.getAttribute("given_name");
-        String apellido = oAuth2User.getAttribute("family_name");
+        String providerId = getProviderId(oAuth2User, registrationId);
+        String pictureUrl = getPictureUrl(oAuth2User, registrationId);
+        String name = oAuth2User.getAttribute("name");
+        String[] nombreCompleto = extraerNombreApellido(name);
+        String nombre = nombreCompleto[0];
+        String apellido = nombreCompleto[1];
 
-        Usuario usuario = usuarioRepository.findByUsername(email)
-                .orElseGet(() -> {
-                    //crear uusario si no existe
-                    Usuario nuevoUsuario = Usuario.builder()
-                            .username(email)
-                            .password("")
-                            .rol(RolUsuario.CLIENTE)
-                            .build();
-                    nuevoUsuario.setEliminado(false);
-                    return usuarioRepository.save(nuevoUsuario);
-                });
+        Usuario usuario = usuarioRepository.findByUsername(email) //Busca o crea usuario
+                .orElseGet(() -> createNewUserFromOAuth2(
+                        email,
+                        nombre,
+                        apellido,
+                        registrationId,
+                        providerId,
+                        pictureUrl
+                ));
 
-        // ver si ya tiene cliente asociado la cuenta
-        Cliente cliente = clienteRepository.findByUsuarioId(usuario.getId());
-        if (cliente == null) {
-            // crear cliente
-            cliente = new Cliente();
-            cliente.setNombre(nombre != null ? nombre : "Usuario");
-            cliente.setApellido(apellido != null ? apellido : "Google");
-            cliente.setDireccionEstadia("Pendiente");
-            cliente.setEliminado(false);
-
-            // asociar usuario
-            cliente.setUsuarios(List.of(usuario));
-
-            clienteRepository.save(cliente);
+        if (pictureUrl != null && !pictureUrl.equals(usuario.getPictureUrl())) { // Actualizar la imagen de perfil si ha cambiado
+            actualizarImagenPerfil(usuario, pictureUrl);
         }
+
+        // ver si ya tiene cliente asociado la cuenta y crearlo si no existe
+        crearClienteSiNoExiste(usuario, nombre, apellido);
 
         // Generar token JWT
         String token = jwtService.getToken(usuario);
 
         // Redirigir con el token
-        String redirectUrl = "http://localhost:8050/auth/oauth2/success?token=" + token;
+        String redirectUrl = "http://localhost:8050/login-success?token=" + token;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 
-    private Usuario createNewUserFromGoogle(String email, String name) {
+    private Usuario createNewUserFromOAuth2(String email, String nombre, String apellido, String provider, String providerId, String pictureUrl) {
         Usuario newUser = Usuario.builder()
                 .username(email)
-                .password("") //No hay clave porque viene de google
+                .password("") // Sin password para google o facebook
                 .rol(RolUsuario.CLIENTE)
+                .provider(provider)
+                .providerId(providerId)
+                .pictureUrl(pictureUrl) // Solo la URL
+                .perfilCompleto(false)
                 .build();
+
+        newUser.setNombre(nombre != null ? nombre : "Usuario");
+        newUser.setApellido(apellido != null ? apellido : "");
+        newUser.setImagen(null); // No descargar imagen inicialmente
+        newUser.setEliminado(false);
+
         return usuarioRepository.save(newUser);
     }
+
+    private void crearClienteSiNoExiste(Usuario usuario, String nombre, String apellido) {
+        // verifica si ya tiene Cliente asociado
+        Cliente cliente = clienteRepository.findByUsuariosContaining(usuario);
+        if (cliente == null) {
+            // Crear nuevo Cliente
+            cliente = new Cliente();
+            cliente.setNombre(nombre != null ? nombre : "Usuario");
+            cliente.setApellido(apellido != null ? apellido : "");
+            cliente.setDireccionEstadia("Pendiente");
+            cliente.setEliminado(false);
+            // Datos heredados de Persona que quedan null hasta completar perfil
+            cliente.setFechaNacimiento(null);
+            cliente.setTipoDocumento(null);
+            cliente.setNumeroDocumento(null);
+            cliente.setContactos(new ArrayList<>());
+            cliente.setDireccion(null);
+            cliente.setNacionalidad(null);
+            cliente.setImagen(null);
+
+            // Asociar Usuario al Cliente
+            List<Usuario> usuarios = new ArrayList<>();
+            usuarios.add(usuario);
+            cliente.setUsuarios(usuarios);
+
+            clienteRepository.save(cliente);
+        }
+    }
+
+    private void actualizarImagenPerfil(Usuario usuario, String pictureUrl) {
+        // Solo actualizar la URL, no descargar
+        usuario.setPictureUrl(pictureUrl);
+        usuarioRepository.save(usuario);
+    }
+
+    private String getRegistrationId(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        if (uri.contains("google")) {
+            return "GOOGLE";
+        } else if (uri.contains("facebook")) {
+            return "FACEBOOK";
+        }
+        return "UNKNOWN";
+    }
+
+    private String getProviderId(OAuth2User oAuth2User, String registrationId) {
+        if ("GOOGLE".equals(registrationId)) {
+            return oAuth2User.getAttribute("sub");
+        } else if ("FACEBOOK".equals(registrationId)) {
+            return oAuth2User.getAttribute("id");
+        }
+        return null;
+    }
+
+    private String getPictureUrl(OAuth2User oAuth2User, String registrationId) {
+        if ("GOOGLE".equals(registrationId)) {
+            return oAuth2User.getAttribute("picture");
+        } else if ("FACEBOOK".equals(registrationId)) {
+            Map<String, Object> picture = oAuth2User.getAttribute("picture");
+            if (picture != null) {
+                Map<String, Object> data = (Map<String, Object>) picture.get("data");
+                if (data != null) {
+                    return (String) data.get("url");
+                }
+            }
+        }
+        return null;
+    }
+
+    private String[] extraerNombreApellido(String nombreCompleto) {
+        if (nombreCompleto == null || nombreCompleto.trim().isEmpty()) {
+            return new String[]{"", ""};
+        }
+
+        String[] partes = nombreCompleto.trim().split("\\s+", 2);
+        String nombre = partes[0];
+        String apellido = partes.length > 1 ? partes[1] : "";
+
+        return new String[]{nombre, apellido};
+    }
+
+
+
 
 }

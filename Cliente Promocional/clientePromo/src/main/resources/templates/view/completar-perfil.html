@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completar Perfil - Sprint Solutions</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/style.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Raleway:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="icon" th:href="@{/images/fevicon.png}" type="image/gif">
+    <style>
+        body {
+            font-family: 'Raleway', sans-serif;
+            background: linear-gradient(135deg, #fe5b29 0%, #363636 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .profile-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .profile-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #f0f0f0; }
+
+        .profile-avatar {
+            width: 120px; height: 120px; border-radius: 50%;
+            margin: 0 auto 20px; object-fit: cover;
+            border: 4px solid #fe5b29; box-shadow: 0 5px 15px rgba(254, 91, 41, 0.3);
+        }
+
+        .profile-header h1 { color: #363636; font-weight: 800; font-size: 28px; margin-bottom: 10px; font-family: 'Poppins', sans-serif; }
+
+        .info-badge {
+            display: inline-block;
+            background: #ffe5dc;
+            color: #fe5b29;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .section-title {
+            color: #363636; font-weight: 700; font-size: 18px;
+            margin-bottom: 20px; padding-bottom: 10px;
+            border-bottom: 2px solid #fe5b29; font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group label { color: #363636; font-weight: 600; margin-bottom: 8px; }
+        .form-control { border-radius: 10px; border: 2px solid #e0e0e0; padding: 12px 15px; }
+        .form-control:focus { border-color: #fe5b29; box-shadow: 0 0 0 0.2rem rgba(254, 91, 41, 0.15); }
+        .btn-submit { background: linear-gradient(135deg, #fe5b29 0%, #ff7b50 100%); border: none; border-radius: 10px; color: white; font-weight: 700; padding: 14px 40px; cursor: pointer; }
+        .btn-skip { border: 2px solid #e0e0e0; border-radius: 10px; padding: 12px 40px; background: transparent; color: #666; font-weight: 600; cursor: pointer; }
+        .btn-skip:hover { border-color: #fe5b29; color: #fe5b29; }
+        .button-group { text-align: center; margin-top: 40px; border-top: 2px solid #f0f0f0; padding-top: 30px; }
+        .required { color: #fe5b29; }
+    </style>
+</head>
+<body>
+<div class="profile-wrapper">
+
+    <!-- Header -->
+    <div class="profile-header">
+        <img th:src="${usuario.pictureUrl != null ? usuario.pictureUrl : 'https://via.placeholder.com/120'}"
+             class="profile-avatar" alt="Foto de perfil">
+        <h1>¡Bienvenido, <span th:text="${usuario.nombre}">Usuario</span>!</h1>
+        <p>Completá tu perfil para comenzar a usar Sprint Solutions</p>
+        <div class="info-badge"><i class="fa fa-info-circle"></i> Solo te tomará 2 minutos</div>
+    </div>
+
+    <!-- Formulario -->
+    <form th:action="@{/completar-perfil}" method="post">
+
+        <!-- Información Personal -->
+        <div class="form-section">
+            <h3 class="section-title"><i class="fa fa-user"></i> Información Personal</h3>
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nombre">Nombre <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="nombre" name="nombre"
+                               th:value="${usuario.nombre}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="apellido">Apellido <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="apellido" name="apellido"
+                               th:value="${usuario.apellido}" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="email">Usuario (Email) <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="email" name="email"
+                               th:value="${usuario.nombreUsuario}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="fechaNacimiento">Fecha de Nacimiento <span class="required">*</span></label>
+                        <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento"
+                               th:value="${#dates.format(usuario.fechaNacimiento, 'yyyy-MM-dd')}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documento -->
+        <div class="form-section">
+            <h3 class="section-title"><i class="fa fa-id-card"></i> Documento de Identidad</h3>
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="tipoDocumento">Tipo de Documento <span class="required">*</span></label>
+                        <select class="form-control" id="tipoDocumento" name="tipoDocumento" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="DNI" th:selected="${usuario.tipoDocumento == 'DNI'}">DNI</option>
+                            <option value="PASAPORTE" th:selected="${usuario.tipoDocumento == 'PASAPORTE'}">Pasaporte</option>
+                            <option value="CEDULA" th:selected="${usuario.tipoDocumento == 'CEDULA'}">Cédula</option>
+                            <option value="OTRO" th:selected="${usuario.tipoDocumento == 'OTRO'}">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="numeroDocumento">Número de Documento <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento"
+                               th:value="${usuario.numeroDocumento}" placeholder="Ej: 12345678" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contacto -->
+        <div class="form-section">
+            <h3 class="section-title"><i class="fa fa-phone"></i> Información de Contacto</h3>
+            <div class="form-group">
+                <label for="telefono">Teléfono <span class="required">*</span></label>
+                <input type="tel" class="form-control" id="telefono" name="telefono"
+                       th:value="${usuario.contactos != null && !usuario.contactos.isEmpty() ? usuario.contactos[0].observacion : ''}"
+                       placeholder="Ej: +54 9 261 1234567" required>
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="button-group">
+            <button type="button" class="btn-skip" onclick="window.location.href='/home'">
+                Completar más tarde
+            </button>
+            <button type="submit" class="btn-submit">
+                <i class="fa fa-check"></i> Guardar y Continuar
+            </button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

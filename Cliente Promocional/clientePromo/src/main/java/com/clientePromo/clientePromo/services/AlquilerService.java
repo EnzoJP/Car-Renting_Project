@@ -27,6 +27,8 @@ public class AlquilerService extends BaseServiceClient<AlquilerDTO, Long> {
         // obtener el token desde AuthService
         String token = authService.getToken();
 
+        System.out.println("=== URL: " + url);
+
         //crear headers con el Authorization
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);

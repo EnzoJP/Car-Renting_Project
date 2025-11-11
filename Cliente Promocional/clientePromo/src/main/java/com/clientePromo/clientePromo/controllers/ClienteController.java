@@ -48,12 +48,23 @@ public class ClienteController {
         try {
             //obtengo cliente autenticAado
             UsuarioDTO usuarioLogueado = authService.getUsuarioAutenticado();
+
             //busvo x usuario
             ClienteDTO cliente = clienteService.findByUsuarioId(usuarioLogueado.getId());
             model.addAttribute("cliente", cliente);
+            System.out.println(cliente.getId());
+            System.out.println(usuarioLogueado.getId());
             //historial de alquileres
             List<AlquilerDTO> alquileres = alquilerService.findAlquileresPorCliente(cliente.getId());
+
+            // calcular total solo de alquileres ADEUDADO
+            double totalAdeudado = alquileres.stream()
+                    .filter(a -> a.getEstadoAlquiler() == null || a.getEstadoAlquiler().name().equals("ADEUDADO") || a.getEstadoAlquiler() == com.clientePromo.clientePromo.DTO.EstadoAlquiler.ADEUDADO)
+                    .mapToDouble(a -> a.getCosto() != null ? a.getCosto() : 0.0)
+                    .sum();
+
             model.addAttribute("alquileres", alquileres);
+            model.addAttribute("total", totalAdeudado);
 
             cargarDatosNavbar(model);
 

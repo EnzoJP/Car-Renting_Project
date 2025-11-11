@@ -2,6 +2,8 @@ package com.clientePromo.clientePromo.auth;
 
 import com.clientePromo.clientePromo.DTO.ContactoDTO;
 import com.clientePromo.clientePromo.DTO.UsuarioDTO;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,7 +21,9 @@ import java.util.Map;
 public class AuthService {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    @Getter
     private String token;
+    @Getter
     private UsuarioDTO usuarioAutenticado;
 
     public boolean login(String username, String password) {
@@ -120,10 +124,6 @@ public class AuthService {
     }
 
 
-    public String getToken() {
-        return token;
-    }
-
     // Modificamos setToken para que también busque el perfil (para el login de Google)
     public void setToken(String token) {
         this.token = token;
@@ -132,10 +132,6 @@ public class AuthService {
         } else {
             this.usuarioAutenticado = null;
         }
-    }
-
-    public UsuarioDTO getUsuarioAutenticado() {
-        return usuarioAutenticado;
     }
 
     public HttpHeaders authHeaders() {
@@ -148,9 +144,10 @@ public class AuthService {
     }
 
     // mapear la respuesta dle JSON
+    @Setter
+    @Getter
     public static class TokenResponse {
         private String token;
-        public String getToken() { return token; }
-        public void setToken(String token) { this.token = token; }
+
     }
 }

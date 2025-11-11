@@ -26,6 +26,7 @@ public class InicioController {
     private final CaracteristicaVehiculoService caracteristicaVehiculoService;
     private final CostoVehiculoService costoVehiculoService;
 
+
     @Autowired
     public InicioController(AuthService authService,
                             WeatherService weatherService,

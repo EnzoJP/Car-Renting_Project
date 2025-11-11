@@ -22,7 +22,7 @@ public class ClienteService extends BaseServiceClient<ClienteDTO, Long> {
         this.restTemplate = restTemplate;
     }
 
-    // endpoint debe ser algo asi: /clientes/usuario/{id}
+
     public ClienteDTO findByUsuarioId(Long usuarioId) {
         HttpEntity<Void> entity = new HttpEntity<>(authService.authHeaders());
 

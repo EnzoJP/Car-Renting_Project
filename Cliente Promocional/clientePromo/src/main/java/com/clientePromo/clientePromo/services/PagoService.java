@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -20,14 +21,26 @@ public class PagoService {
     @Value("${mp.access.token}")
     private String mpAccessToken;
 
-    public String Pago() throws ErrorServiceException {
+    public String Pago(Double totalPago) throws ErrorServiceException {
+
+        // validar monto
+        if (totalPago == null || totalPago.isNaN() || totalPago.isInfinite() || totalPago <= 0.0) {
+            throw new ErrorServiceException("Monto inválido para procesar el pago: " + totalPago);
+        }
+
+        // validar token configurado
+        if (mpAccessToken == null || mpAccessToken.trim().isEmpty()) {
+            throw new ErrorServiceException("mp.access.token no configurado. Verifique application.properties");
+        }
 
 
         MercadoPagoConfig.setAccessToken(mpAccessToken);
 
         PreferenceClient client = new PreferenceClient();
 
-        Double precio1 = 10.00;
+        // normalizar a 2 decimales con BigDecimal para evitar problemas de formato
+        BigDecimal precioBD = BigDecimal.valueOf(totalPago).setScale(2, RoundingMode.HALF_UP);
+        System.out.println("[PagoService] precioBD=" + precioBD.toPlainString());
 
         PreferenceRequest request = PreferenceRequest.builder()
                 .items(Arrays.asList(
@@ -35,7 +48,7 @@ public class PagoService {
                                 .title("Pago de Auto")
                                 .description("Pago de el alquiler de auto")
                                 .quantity(1)
-                                .unitPrice(BigDecimal.valueOf(precio1))
+                                .unitPrice(precioBD)
                                 .build()
                 ))
                 .backUrls(

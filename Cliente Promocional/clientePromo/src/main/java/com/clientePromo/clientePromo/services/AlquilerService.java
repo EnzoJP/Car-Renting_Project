@@ -22,7 +22,7 @@ public class AlquilerService extends BaseServiceClient<AlquilerDTO, Long> {
     }
 
     public List<AlquilerDTO> findAlquileresPorCliente(Long clienteId) {
-        String url = "http://localhost:9000/api/v1/alquileres/cliente/" + clienteId;
+        String url = "http://localhost:9000/api/v1/alquileres?cliente.id=" + clienteId;
 
         // obtener el token desde AuthService
         String token = authService.getToken();
@@ -40,7 +40,9 @@ public class AlquilerService extends BaseServiceClient<AlquilerDTO, Long> {
                 AlquilerDTO[].class
         );
 
+
         return Arrays.asList(response.getBody());
     }
 
 }
+

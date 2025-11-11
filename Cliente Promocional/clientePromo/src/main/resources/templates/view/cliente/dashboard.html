@@ -246,7 +246,7 @@
 
 <div th:replace="~{view/cliente/components/navbar :: nav_bar_cliente}"></div>
 
-<div class="container dashboard-container">
+<div class="container dashboard-container" th:with="total=${#aggregates.sum(alquileres.![costo ?: 0])}">
     <div class="row">
 
         <!-- PERFIL DEL CLIENTE -->
@@ -274,7 +274,7 @@
                 <!-- Saldo -->
                 <div class="saldo-info">
                     <p class="mb-2">Saldo Pendiente</p>
-                    <div class="saldo-amount" th:text="'$' + (${cliente?.saldoPendiente} ?: 0)">
+                    <div class="saldo-amount" th:text="'$' + ${total}">
                         $0.00
                     </div>
                 </div>
@@ -290,10 +290,14 @@
             <div class="history-section">
                 <h2>Mi Historial de Alquileres</h2>
 
+                <!-- DEBUG: Mostrar cantidad -->
+                <p th:text="'Total alquileres: ' + ${alquileres != null ? alquileres.size() : 0}"></p>
+
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Vehículo</th>
                             <th>Desde</th>
                             <th>Hasta</th>
@@ -305,7 +309,7 @@
 
                         <!-- Sin alquileres -->
                         <tr th:if="${alquileres == null or #lists.isEmpty(alquileres)}">
-                            <td colspan="5">
+                            <td colspan="6">
                                 <div class="empty-state">
                                     <i class="fa fa-car"></i>
                                     <p>Aún no tienes alquileres registrados.</p>
@@ -316,44 +320,65 @@
 
                         <!-- Con alquileres -->
                         <tr th:each="alquiler : ${alquileres}">
-                            <td>
-                                <strong th:text="(${alquiler?.vehiculo?.caracteristicaVehiculo?.marca} ?: '-') + ' ' + (${alquiler?.vehiculo?.caracteristicaVehiculo?.modelo} ?: '-')">
-                                    Vehículo
-                                </strong>
-                            </td>
-
-                            <td th:text="${alquiler?.fechaDesde != null} ? ${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')} : '-'">
-                                dd/MM/yyyy
-                            </td>
-
-                            <td th:text="${alquiler?.fechaHasta != null} ? ${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')} : '-'">
-                                dd/MM/yyyy
-                            </td>
+                            <!-- ID para debug -->
+                            <td th:text="${alquiler.id}">-</td>
 
                             <td>
-                                <strong th:text="'$' + (${alquiler?.total} ?: 0)">$0.00</strong>
+                                <!-- Simplificado para debug -->
+                                <span th:if="${alquiler.vehiculo != null and alquiler.vehiculo.caracteristicaVehiculo != null}"
+                                      th:text="${alquiler.vehiculo.caracteristicaVehiculo.marca} + ' ' + ${alquiler.vehiculo.caracteristicaVehiculo.modelo}">
+                            Vehículo
+                        </span>
+                                <span th:if="${alquiler.vehiculo == null or alquiler.vehiculo.caracteristicaVehiculo == null}">
+                            Sin datos
+                        </span>
+                            </td>
+
+                            <td>
+                        <span th:if="${alquiler.fechaDesde != null}"
+                              th:text="${#dates.format(alquiler.fechaDesde, 'dd/MM/yyyy')}">-</span>
+                                <span th:if="${alquiler.fechaDesde == null}">-</span>
+                            </td>
+
+                            <td>
+                        <span th:if="${alquiler.fechaHasta != null}"
+                              th:text="${#dates.format(alquiler.fechaHasta, 'dd/MM/yyyy')}">-</span>
+                                <span th:if="${alquiler.fechaHasta == null}">-</span>
+                            </td>
+
+                            <td>
+                                <strong th:text="'$' + ${alquiler.costo != null ? alquiler.costo : 0}">$0.00</strong>
                             </td>
 
                             <td class="text-center">
-                                <a th:if="${alquiler?.idFactura != null}"
-                                   th:href="@{/cliente/factura/{id}(id=${alquiler.idFactura})}"
-                                   class="btn btn-download"
-                                   title="Descargar Factura">
-                                    <i class="fa fa-download"></i> Descargar
-                                </a>
-                                <span th:if="${alquiler?.idFactura == null}" class="text-muted">
-                                        <small>Sin factura</small>
-                                    </span>
+                        <span th:if="${alquiler.documentacion != null}">
+                            <a th:href="@{/cliente/factura/{id}(id=${alquiler.id})}"
+                               class="btn btn-download"
+                               title="Descargar Factura">
+                                <i class="fa fa-download"></i> Descargar
+                            </a>
+                        </span>
+                                <span th:if="${alquiler.documentacion == null}" class="text-muted">
+                            <small>Sin factura</small>
+                        </span>
                             </td>
                         </tr>
 
                         </tbody>
+                        <tfoot th:if="${alquileres != null and !#lists.isEmpty(alquileres)}">
+                        <tr>
+                            <td colspan="4" class="text-right"><strong>Total General:</strong></td>
+                            <td><strong th:text="'$' + ${total}">$0.00</strong></td>
+                            <td></td>
+                        </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
         </div>
 
     </div>
+
 </div>
 
 <div th:replace="~{view/cliente/components/footerDash :: footer_dash}"></div>

@@ -133,22 +133,15 @@ public abstract class BaseControllerApi<T extends BaseEntity<ID>, ID> {
     protected void postDelete(ID id) throws ErrorServiceException {}
 
 
-    /**
-     * Filtra una lista de entidades usando reflexión para acceder a los campos dinámicamente
-     * Metodo protegido para que las subclases puedan sobrescribirlo si necesitan lógica personalizada
-     */
     protected List<T> filtrarPorParametros(List<T> lista, Map<String, String> params) {
-        // basicamente busca con el paramatro el getter correspondiente y con el valor compara si contiene el valor buscado
         return lista.stream().filter(entidad -> {
             return params.entrySet().stream().allMatch(entry -> {
                 try {
                     String nombreCampo = entry.getKey();
                     String valorBuscado = entry.getValue().toLowerCase();
 
-                    // Obtener el getter del campo usando reflexión
-                    String getterName = "get" + nombreCampo.substring(0, 1).toUpperCase() + nombreCampo.substring(1);
-                    java.lang.reflect.Method getter = entidad.getClass().getMethod(getterName);
-                    Object valorCampo = getter.invoke(entidad);
+                    // Obtener el valor del campo (soporta campos anidados)
+                    Object valorCampo = obtenerValorCampo(entidad, nombreCampo);
 
                     // Comparar valores
                     if (valorCampo == null) {
@@ -163,6 +156,41 @@ public abstract class BaseControllerApi<T extends BaseEntity<ID>, ID> {
                 }
             });
         }).collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Obtiene el valor de un campo usando reflexión
+     * Soporta campos anidados usando notación de punto (ej: cliente.id)
+     */
+    private Object obtenerValorCampo(Object objeto, String nombreCampo) throws Exception {
+        // Si el campo contiene punto, es un campo anidado
+        if (nombreCampo.contains(".")) {
+            String[] partes = nombreCampo.split("\\.", 2);
+            String campoActual = partes[0];
+            String campoRestante = partes[1];
+
+            // Obtener el objeto intermedio
+            Object objetoIntermedio = obtenerValorCampoSimple(objeto, campoActual);
+
+            if (objetoIntermedio == null) {
+                return null;
+            }
+
+            // Recursivamente obtener el valor del siguiente nivel
+            return obtenerValorCampo(objetoIntermedio, campoRestante);
+        } else {
+            // Campo simple, obtener directamente
+            return obtenerValorCampoSimple(objeto, nombreCampo);
+        }
+    }
+
+    /**
+     * Obtiene el valor de un campo simple (no anidado) usando reflexión
+     */
+    private Object obtenerValorCampoSimple(Object objeto, String nombreCampo) throws Exception {
+        String getterName = "get" + nombreCampo.substring(0, 1).toUpperCase() + nombreCampo.substring(1);
+        java.lang.reflect.Method getter = objeto.getClass().getMethod(getterName);
+        return getter.invoke(objeto);
     }
 
 

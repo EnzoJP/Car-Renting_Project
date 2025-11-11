@@ -41,9 +41,9 @@ public class UsuarioService extends BaseService<Usuario, Long> {
             throws ErrorServiceException {
 
         try {
-            System.out.println("🔄 Procesando cambio de clave para: " + username);
+            System.out.println(" Procesando cambio de clave para: " + username);
 
-            // Buscar el usuario por username
+            //buscar el usuario por username
             Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(username);
 
             if (usuarioOpt.isEmpty()) {

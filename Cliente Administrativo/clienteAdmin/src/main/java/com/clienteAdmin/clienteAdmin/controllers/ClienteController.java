@@ -1,6 +1,8 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
 import com.clienteAdmin.clienteAdmin.DTO.ClienteDTO;
+import com.clienteAdmin.clienteAdmin.DTO.DireccionDTO;
+import com.clienteAdmin.clienteAdmin.DTO.LocalidadDTO;
 import com.clienteAdmin.clienteAdmin.DTO.ImagenDTO;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import com.clienteAdmin.clienteAdmin.services.*;
@@ -33,6 +35,18 @@ public class ClienteController extends BaseController<ClienteDTO, Long> {
     @Autowired
     private DireccionService direccionService;
 
+    @Autowired
+    private PaisService paisService;
+
+    @Autowired
+    private ProvinciaService provinciaService;
+
+    @Autowired
+    private DepartamentoService departamentoService;
+
+    @Autowired
+    private LocalidadService localidadService;
+
     public ClienteController(ClienteService service) {
         super(service);
         initController(new ClienteDTO(),
@@ -47,6 +61,12 @@ public class ClienteController extends BaseController<ClienteDTO, Long> {
         model.addAttribute("imagenes", imagenService.listarActivos());
         model.addAttribute("contactos", contactoService.listarActivos());
         model.addAttribute("direcciones", direccionService.listarActivos());
+
+        // Cargar datos para la cascada de dirección
+        model.addAttribute("paises", paisService.listarActivos());
+        model.addAttribute("provincias", provinciaService.listarActivos());
+        model.addAttribute("departamentos", departamentoService.listarActivos());
+        model.addAttribute("localidades", localidadService.listarActivos());
     }
 
     @Override
@@ -55,28 +75,62 @@ public class ClienteController extends BaseController<ClienteDTO, Long> {
         model.addAttribute("imagenes", imagenService.listarActivos());
         model.addAttribute("contactos", contactoService.listarActivos());
         model.addAttribute("direcciones", direccionService.listarActivos());
+
+        // Cargar datos para la cascada de dirección
+        model.addAttribute("paises", paisService.listarActivos());
+        model.addAttribute("provincias", provinciaService.listarActivos());
+        model.addAttribute("departamentos", departamentoService.listarActivos());
+        model.addAttribute("localidades", localidadService.listarActivos());
     }
 
-    @Override
-    @PostMapping("/actualizar")
-    public String actualizar(@ModelAttribute("item") ClienteDTO entidad,
-                             @RequestParam(value = "file", required = false) MultipartFile file,
-                             RedirectAttributes attributes,
-                             Model model) {
+    @PostMapping("/actualizarCliente")
+    public String actualizarCliente(
+            @ModelAttribute("item") ClienteDTO entidad,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            // Parámetros de dirección
+            @RequestParam(value = "localidadId", required = false) Long localidadId,
+            @RequestParam(value = "calle", required = false) String calle,
+            @RequestParam(value = "numeracion", required = false) String numeracion,
+            @RequestParam(value = "barrio", required = false) String barrio,
+            @RequestParam(value = "manzanaPiso", required = false) String manzanaPiso,
+            @RequestParam(value = "casaDepartamento", required = false) String casaDepartamento,
+            @RequestParam(value = "referencia", required = false) String referencia,
+            RedirectAttributes attributes,
+            Model model) {
         try {
             this.model = model;
             preActualziacion();
 
             if (file != null && !file.isEmpty()) {
-                // Creamos una nueva ImagenDTO con los datos del archivo
                 ImagenDTO imagen = new ImagenDTO();
                 imagen.setContenido(file.getBytes());
                 imagen.setMime(file.getContentType());
 
-                entidad.setImagen(imagen);
+                ImagenDTO imagenGuardada = imagenService.alta(imagen);
+                entidad.setImagen(imagenGuardada);
             }
-            // --- Fin Lógica de Imagen ---
 
+            // Construir la dirección manualmente
+            if (localidadId != null && calle != null && !calle.trim().isEmpty()) {
+                DireccionDTO direccion = new DireccionDTO();
+                direccion.setCalle(calle);
+                direccion.setNumeracion(numeracion);
+                direccion.setBarrio(barrio);
+                direccion.setManzanaPiso(manzanaPiso);
+                direccion.setCasaDepartamento(casaDepartamento);
+                direccion.setReferencia(referencia);
+
+                // Vincular con la localidad
+                LocalidadDTO localidad = new LocalidadDTO();
+                localidad.setId(localidadId);
+                direccion.setLocalidad(localidad);
+
+                // Guardar la dirección primero
+                DireccionDTO direccionGuardada = direccionService.alta(direccion);
+                entidad.setDireccion(direccionGuardada);
+            }
+
+            // Guardar el cliente
             if (entidad.getId() == null) {
                 service.alta(entidad);
             } else {
@@ -89,7 +143,8 @@ public class ClienteController extends BaseController<ClienteDTO, Long> {
 
         } catch (ErrorServiceException e) {
             model.addAttribute("msgError", e.getMessage());
-
+            model.addAttribute("isDisabled", false);
+            model.addAttribute("item", entidad);
             try {
                 preModificacion();
             } catch (ErrorServiceException ex) {
@@ -98,6 +153,8 @@ public class ClienteController extends BaseController<ClienteDTO, Long> {
             return viewEdit;
         } catch (Exception e) {
             model.addAttribute("msgError", "Error de Sistema: " + e.getMessage());
+            model.addAttribute("isDisabled", false);
+            model.addAttribute("item", entidad);
             try {
                 preModificacion();
             } catch (ErrorServiceException ex) {

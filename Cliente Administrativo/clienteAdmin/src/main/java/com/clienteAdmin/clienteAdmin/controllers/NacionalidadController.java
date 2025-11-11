@@ -18,6 +18,6 @@ public class NacionalidadController extends BaseController<NacionalidadDTO, Long
         initController(new NacionalidadDTO(),
                 "LIST NACIONALIDAD",
                 "EDIT NACIONALIDAD",
-                "view/admin/Menu/utils/");
+                "view/admin/Menu/direccion/");
     }
 }

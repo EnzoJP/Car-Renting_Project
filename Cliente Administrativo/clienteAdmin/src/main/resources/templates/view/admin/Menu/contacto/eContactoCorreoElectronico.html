@@ -1,78 +1,186 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="favicon.ico">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title th:text="${titleEdit}">Gestión de Correo</title>
 
-    <title th:text="${titleEdit}"></title>
-    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
-    <link th:href="@{/css/jumbotron.css}" rel="stylesheet">
-    <link th:href="@{/css/sticky-footer-navbar.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 
-<body>
-<header th:insert="~{components/menubody :: menu-principal}"></header>
+<body class="sb-nav-fixed">
 
-<main role="main">
-    <hr>
-    <div class="container">
-        <div class="card">
-            <h4 class="card-header">
-                <strong th:text="${titleEdit}"></strong>
-            </h4>
+<nav th:replace="~{view/admin/components/navbarUs :: navbar_usuario}"></nav>
 
-            <div class="card-body">
-                <form th:action="@{'/' + ${nameEntityLower} + '/actualizar'}" th:object="${item}" method="post">
-                    <input type="hidden" th:field="*{id}" />
-
-                    <div th:if="${msgExito}" class='alert alert-success' th:text="${msgExito}" role='alert'></div>
-                    <div th:if="${msgError}" class='alert alert-danger' th:text="${msgError}" role='alert'></div>
-
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" class="form-control" th:field="*{email}" required="required" th:disabled="${isDisabled}">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Tipo de Contacto</label>
-                        <select class="form-control" th:field="*{tipoContacto}" th:disabled="${isDisabled}">
-                            <option value="PERSONAL">Personal</option>
-                            <option value="LABORAL">Laboral</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Persona</label>
-                        <select class="form-control" th:field="*{persona.id}" th:disabled="${isDisabled}">
-                            <option value="">-- Seleccione una persona --</option>
-                            <option th:each="p : ${personas}"
-                                    th:value="${p.id}"
-                                    th:text="${p.nombre + ' ' + p.apellido + ' (' + p.numeroDocumento + ')'}">
-                            </option>
-                        </select>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label>Observación</label>
-                        <textarea class="form-control" th:field="*{observacion}" rows="3" th:disabled="${isDisabled}"></textarea>
-                    </div>
-
-                    <hr>
-                    <div class="d-grid gap-2 float-right justify-content-md-end">
-                        <button type="submit" class="btn btn-primary" th:disabled="${isDisabled}">ACEPTAR</button>
-                        <a class="btn btn-primary" th:href="@{'/' + ${nameEntityLower} + '/cancelar'}">CANCELAR</a>
-                    </div>
-                </form>
-            </div>
-        </div>
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav th:replace="~{view/admin/components/sidebar :: sidebar}"></nav>
     </div>
-</main>
 
-<footer th:insert="~{components/footer :: footer}" class="footer"></footer>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4" th:text="${titleEdit}">Gestión de Correo</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/contactocorreo/list}">Correos</a></li>
+                    <li class="breadcrumb-item active" th:text="${item.id == null ? 'Nuevo' : 'Editar'}">Formulario</li>
+                </ol>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script th:src="@{/js/bootstrap.min.js}"></script>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-envelope me-1"></i>
+                                <span th:text="${titleEdit}">Formulario de Correo</span>
+                            </div>
+                            <div class="card-body">
+
+                                <div th:if="${msgExito != null}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <span th:text="${msgExito}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <div th:if="${msgError != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <span th:text="${msgError}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <form th:action="@{'/' + ${nameEntityLower} + '/actualizar'}" th:object="${item}" method="post">
+                                    <input type="hidden" th:field="*{id}" />
+
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="email" th:field="*{email}" required="required" th:disabled="${isDisabled}">
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="tipoContacto" class="form-label">Tipo de Contacto</label>
+                                        <select class="form-select" id="tipoContacto" th:field="*{tipoContacto}" th:disabled="${isDisabled}">
+                                            <option value="PERSONAL">Personal</option>
+                                            <option value="LABORAL">Laboral</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Tipo de Persona <span class="text-danger">*</span></label><br>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoPersona" id="tipoCliente" value="CLIENTE" th:disabled="${isDisabled}">
+                                            <label class="form-check-label" for="tipoCliente">Cliente</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" name="tipoPersona" id="tipoEmpleado" value="EMPLEADO" th:disabled="${isDisabled}">
+                                            <label class="form-check-label" for="tipoEmpleado">Empleado</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3" id="personaWrapper" style="display: none;">
+                                        <label for="personaSelect" class="form-label">Persona <span class="text-danger">*</span></label>
+                                        <select class="form-select" th:field="*{persona.id}" th:disabled="${isDisabled}" id="personaSelect">
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="observacion" class="form-label">Observación</label>
+                                        <textarea class="form-control" id="observacion" th:field="*{observacion}" rows="3" th:disabled="${isDisabled}"></textarea>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                        <button type="submit" class="btn btn-primary me-md-2" th:disabled="${isDisabled}" th:if="${!isDisabled}">
+                                            <i class="fas fa-save me-1"></i> Guardar
+                                        </button>
+                                        <a class="btn btn-secondary" th:href="@{'/' + ${nameEntityLower} + '/cancelar'}" role="button">
+                                            <i class="fas fa-times me-1"></i>
+                                            <span th:text="${isDisabled ? 'Volver' : 'Cancelar'}">Cancelar</span>
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{components/footer :: footer}"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/scripts.js}"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // 1. Obtener los datos de Thymeleaf (listas ordenadas)
+    const clientes = /*[[${clientes}]]*/ [];
+    const empleados = /*[[${empleados}]]*/ [];
+    const personaIdActual = /*[[${item.persona != null ? item.persona.id : null}]]*/ null;
+
+    // 2. Obtener los elementos del DOM
+    const radioCliente = document.getElementById('tipoCliente');
+    const radioEmpleado = document.getElementById('tipoEmpleado');
+    const selectPersona = document.getElementById('personaSelect');
+    const personaWrapper = document.getElementById('personaWrapper');
+
+    // 3. Función para poblar el dropdown
+    function poblarPersonas(tipo) {
+        selectPersona.innerHTML = ''; // Limpiar opciones
+        let lista = [];
+        let defaultOptionText = '';
+
+        if (tipo === 'CLIENTE') {
+            lista = clientes;
+            defaultOptionText = '-- Seleccione un Cliente --';
+        } else if (tipo === 'EMPLEADO') {
+            lista = empleados;
+            defaultOptionText = '-- Seleccione un Empleado --';
+        }
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.text = defaultOptionText;
+        selectPersona.appendChild(defaultOption);
+
+        lista.forEach(persona => {
+            const option = document.createElement('option');
+            option.value = persona.id;
+            option.text = `${persona.nombre} ${persona.apellido} (${persona.numeroDocumento})`;
+            selectPersona.appendChild(option);
+        });
+        personaWrapper.style.display = 'block';
+    }
+
+    // 4. Añadir Event Listeners
+    radioCliente.addEventListener('change', () => poblarPersonas('CLIENTE'));
+    radioEmpleado.addEventListener('change', () => poblarPersonas('EMPLEADO'));
+
+    // 5. Estado inicial (para 'modificar')
+    if (personaIdActual != null) {
+        let personaTipo = null;
+        if (clientes.some(c => c.id == personaIdActual)) {
+            personaTipo = 'CLIENTE';
+        } else if (empleados.some(e => e.id == personaIdActual)) {
+            personaTipo = 'EMPLEADO';
+        }
+
+        if (personaTipo === 'CLIENTE') {
+            radioCliente.checked = true;
+            poblarPersonas('CLIENTE');
+            selectPersona.value = personaIdActual;
+        } else if (personaTipo === 'EMPLEADO') {
+            radioEmpleado.checked = true;
+            poblarPersonas('EMPLEADO');
+            selectPersona.value = personaIdActual;
+        }
+    }
+    /*]]>*/
+</script>
+
 </body>
 </html>

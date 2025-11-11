@@ -33,7 +33,7 @@ public class Persona extends BaseEntity<Long> {
     @ManyToOne
     private Direccion direccion;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Imagen imagen;
 
 

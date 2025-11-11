@@ -26,7 +26,7 @@
                 <h1 class="mt-4" th:text="${titulo}">Gestión de Usuarios</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}">Dashboard</a></li>
-                    <li class="breadcrumb-item active">Usuarios</li>
+                    <li class="breadcrumb-item active">Gestión</li>
                 </ol>
 
                 <div class="row">
@@ -39,7 +39,7 @@
                             <div class="card-body">
                                 <div class="row g-4 justify-content-center">
 
-                                    <div class="col-md-6 col-lg-4">
+                                    <div class="col-md-6 col-lg-3">
                                         <div class="card border-primary h-100">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-users fa-3x text-primary mb-3"></i>
@@ -52,13 +52,39 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6 col-lg-4">
+                                    <div class="col-md-6 col-lg-3">
                                         <div class="card border-success h-100">
                                             <div class="card-body text-center">
                                                 <i class="fas fa-user-tie fa-3x text-success mb-3"></i>
                                                 <h5 class="card-title">Empleados</h5>
                                                 <p class="card-text">Gestionar empleados y administradores.</p>
                                                 <a th:href="@{/admin/empleado/list}" class="btn btn-success">
+                                                    <i class="fas fa-list me-1"></i> Gestionar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="card border-info h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-envelope fa-3x text-info mb-3"></i>
+                                                <h5 class="card-title">Correos</h5>
+                                                <p class="card-text">Gestionar correos de contacto.</p>
+                                                <a th:href="@{/contactocorreo/list}" class="btn btn-info">
+                                                    <i class="fas fa-list me-1"></i> Gestionar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="card border-warning h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-phone fa-3x text-warning mb-3"></i>
+                                                <h5 class="card-title">Teléfonos</h5>
+                                                <p class="card-text">Gestionar teléfonos de contacto.</p>
+                                                <a th:href="@{/contactotelefonico/list}" class="btn btn-warning">
                                                     <i class="fas fa-list me-1"></i> Gestionar
                                                 </a>
                                             </div>

@@ -3,7 +3,7 @@ package com.clienteAdmin.clienteAdmin.controllers;
 import com.clienteAdmin.clienteAdmin.DTO.ContactoCorreoElectronicoDTO;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import com.clienteAdmin.clienteAdmin.services.ContactoCorreoElectronicoService;
-import com.clienteAdmin.clienteAdmin.services.PersonaService;
+import com.clienteAdmin.clienteAdmin.services.PersonaService; // Mantenemos este
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,12 +32,16 @@ public class ContactoCorreoElectronicoController extends BaseController<Contacto
 
     @Override
     protected void preAlta() throws ErrorServiceException {
-        model.addAttribute("personas", personaService.listarActivos());
+        // MODIFICADO: Enviamos listas separadas y ordenadas
+        model.addAttribute("clientes", personaService.listarClientesActivosOrdenados());
+        model.addAttribute("empleados", personaService.listarEmpleadosActivosOrdenados());
     }
 
     @Override
     protected void preModificacion() throws ErrorServiceException {
-        model.addAttribute("personas", personaService.listarActivos());
+        // MODIFICADO: Enviamos listas separadas y ordenadas
+        model.addAttribute("clientes", personaService.listarClientesActivosOrdenados());
+        model.addAttribute("empleados", personaService.listarEmpleadosActivosOrdenados());
     }
 
     @Override

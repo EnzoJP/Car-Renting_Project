@@ -38,7 +38,6 @@
                             </div>
                             <div class="card-body">
                                 <div class="row g-4">
-                                    <!-- Card País -->
                                     <div class="col-md-6 col-lg-4">
                                         <div class="card border-primary h-100">
                                             <div class="card-body text-center">
@@ -52,7 +51,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Card Provincia -->
                                     <div class="col-md-6 col-lg-4">
                                         <div class="card border-success h-100">
                                             <div class="card-body text-center">
@@ -66,7 +64,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Card Departamento -->
                                     <div class="col-md-6 col-lg-4">
                                         <div class="card border-warning h-100">
                                             <div class="card-body text-center">
@@ -80,7 +77,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Card Localidad -->
                                     <div class="col-md-6 col-lg-4">
                                         <div class="card border-info h-100">
                                             <div class="card-body text-center">
@@ -94,7 +90,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Card Dirección Completa -->
                                     <div class="col-md-6 col-lg-4">
                                         <div class="card border-danger h-100">
                                             <div class="card-body text-center">
@@ -102,6 +97,19 @@
                                                 <h5 class="card-title">Dirección</h5>
                                                 <p class="card-text">Gestionar direcciones completas</p>
                                                 <a th:href="@{/admin/direccion/list}" class="btn btn-danger">
+                                                    <i class="fas fa-list me-1"></i> Gestionar
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="card border-secondary h-100">
+                                            <div class="card-body text-center">
+                                                <i class="fas fa-flag fa-3x text-secondary mb-3"></i>
+                                                <h5 class="card-title">Nacionalidad</h5>
+                                                <p class="card-text">Gestionar nacionalidades del sistema</p>
+                                                <a th:href="@{/admin/nacionalidad/list}" class="btn btn-secondary">
                                                     <i class="fas fa-list me-1"></i> Gestionar
                                                 </a>
                                             </div>

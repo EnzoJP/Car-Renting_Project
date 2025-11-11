@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -246,7 +246,7 @@
 
 <div th:replace="~{view/cliente/components/navbar :: nav_bar_cliente}"></div>
 
-<div class="container dashboard-container" th:with="total=${#aggregates.sum(alquileres.![costo ?: 0])}">
+<div class="container dashboard-container">
     <div class="row">
 
         <!-- PERFIL DEL CLIENTE -->
@@ -277,9 +277,11 @@
                     <div class="saldo-amount" th:text="'$' + ${total}">
                         $0.00
                     </div>
+                    <!-- hidden numeric total to avoid locale/format issues -->
+                    <input type="hidden" id="total-amount" th:value="${total}" />
                 </div>
 
-                <a href="#" class="btn btn-brand w-100 mt-3">
+                <a href="#" id="btn-pagar-billetera" class="btn btn-brand w-100 mt-3">
                     <i class="fa fa-money"></i> Pagar con Billetera Virtual
                 </a>
             </div>
@@ -319,7 +321,8 @@
                         </tr>
 
                         <!-- Con alquileres -->
-                        <tr th:each="alquiler : ${alquileres}">
+                        <tr th:each="alquiler : ${alquileres}"
+                            th:attr="data-alquiler-id=${alquiler.id}, data-estado=${alquiler.estadoAlquiler != null ? alquiler.estadoAlquiler.name() : 'ADEUDADO'}">
                             <!-- ID para debug -->
                             <td th:text="${alquiler.id}">-</td>
 
@@ -351,15 +354,19 @@
                             </td>
 
                             <td class="text-center">
-                        <span th:if="${alquiler.documentacion != null}">
+                        <span th:if="${alquiler.estadoAlquiler != null and alquiler.estadoAlquiler.name() == 'PAGADO'}">
                             <a th:href="@{/cliente/factura/{id}(id=${alquiler.id})}"
                                class="btn btn-download"
-                               title="Descargar Factura">
-                                <i class="fa fa-download"></i> Descargar
+                               title="Ver Factura">
+                                <i class="fa fa-file-text"></i> Ver Factura
                             </a>
                         </span>
-                                <span th:if="${alquiler.documentacion == null}" class="text-muted">
-                            <small>Sin factura</small>
+                        <span th:if="${alquiler.estadoAlquiler == null || alquiler.estadoAlquiler.name() == 'ADEUDADO'}">
+                            <a th:href="@{/pago-descuento(alquilerId=${alquiler.id}, total=${alquiler.costo})}"
+                               class="btn btn-brand"
+                               title="Pagar">
+                                <i class="fa fa-money"></i> Pagar
+                            </a>
                         </span>
                             </td>
                         </tr>
@@ -387,6 +394,50 @@
 <script th:src="@{/bootstrap/js/jquery.min.js}"></script>
 <script th:src="@{/bootstrap/js/popper.min.js}"></script>
 <script th:src="@{/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<script>
+     // Lógica del prompt para aplicar descuento y redirigir
+     (function() {
+         var btn = document.getElementById('btn-pagar-billetera');
+         if (!btn) return;
+         btn.addEventListener('click', function(e) {
+             e.preventDefault();
+             // leer total numérico desde input hidden
+             var totalEl = document.getElementById('total-amount');
+             var total = 0;
+             if (totalEl) {
+                 total = Number(totalEl.value);
+                 if (!isFinite(total)) total = 0;
+             }
+             // mostrar prompt simple
+             var codigo = prompt('Ingrese código de descuento (dejar vacío para pagar sin descuento):');
+             // si usuario cancela el prompt, tratamos como vacío
+             if (codigo === null) codigo = '';
+
+             // construir URL: /pago-descuento?codigo=...&total=...
+             var params = new URLSearchParams();
+             if (codigo && codigo.trim() !== '') params.append('codigo', codigo.trim());
+             params.append('total', total);
+
+             // recopilar ids de alquileres ADEUDADO para marcar como PAGADO si se paga globalmente
+             var rows = document.querySelectorAll('tr[data-alquiler-id][data-estado]');
+             var ids = [];
+             rows.forEach(function(r){
+                 if (r.getAttribute('data-estado') === 'ADEUDADO') {
+                     ids.push(r.getAttribute('data-alquiler-id'));
+                 }
+             });
+             if (ids.length > 0) {
+                 params.append('alquilerIds', ids.join(','));
+             }
+
+             var url = '/pago-descuento';
+             if (params.toString()) url += '?' + params.toString();
+
+             window.location.href = url;
+         });
+     })();
+ </script>
 
 </body>
 </html>

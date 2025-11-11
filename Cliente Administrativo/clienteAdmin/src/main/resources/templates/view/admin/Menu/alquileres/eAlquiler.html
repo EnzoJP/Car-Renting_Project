@@ -79,6 +79,17 @@
                                         <div class="form-text" th:if="${#lists.isEmpty(vehiculos)}">No hay vehículos disponibles.</div>
                                     </div>
 
+                                    <!-- Nuevo campo: Estado del Alquiler -->
+                                    <div class="mb-3">
+                                        <label for="estado" class="form-label">Estado del Alquiler <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="estadoAlquiler" th:field="*{estadoAlquiler}" th:disabled="${isDisabled}" required>
+                                            <option value="">Seleccione un estado...</option>
+                                            <option th:value="'ADEUDADO'" th:selected="${item.id == null or item.estadoAlquiler == 'ADEUDADO'}">ADEUDADO</option>
+                                            <option th:value="'PAGADO'" th:selected="${item.estadoAlquiler == 'PAGADO'}">PAGADO</option>
+                                        </select>
+                                        <div class="form-text">Seleccione si el alquiler está ADEUDADO o PAGADO. Valor por defecto: ADEUDADO para alquileres nuevos.</div>
+                                    </div>
+
                                     <h5 class="mt-4">Documentación del Cliente</h5>
                                     <hr>
 

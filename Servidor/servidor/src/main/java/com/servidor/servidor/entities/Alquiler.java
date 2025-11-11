@@ -36,6 +36,8 @@ public class Alquiler extends BaseEntity<Long> {
 
     private Double costo;
 
+    private String estadoAlquiler;
+
     @Override
     public Long getId() {
         return this.id;

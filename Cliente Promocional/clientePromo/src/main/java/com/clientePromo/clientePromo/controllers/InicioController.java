@@ -21,7 +21,7 @@ public class InicioController {
     private final WeatherService weatherService;
     private final DolarService dolarService;
 
-    // ¡CORREGIDO! Constructor para inyectar TODOS los servicios
+
     @Autowired
     public InicioController(AuthService authService, WeatherService weatherService, DolarService dolarService) {
         this.authService = authService;

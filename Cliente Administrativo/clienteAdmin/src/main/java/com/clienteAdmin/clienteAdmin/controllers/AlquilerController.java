@@ -39,7 +39,9 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
 
     public AlquilerController(AlquilerService service) {
         super(service);
-        initController(new AlquilerDTO(),
+        AlquilerDTO defaultDto = new AlquilerDTO();
+        defaultDto.setEstadoAlquiler("ADEUDADO");
+        initController(defaultDto,
                 "Listado de Alquileres",
                 "Gestión de Alquiler",
                 "view/admin/Menu/alquileres/");

@@ -51,6 +51,7 @@
                                 <th>Desde</th>
                                 <th>Hasta</th>
                                 <th>Costo</th>
+                                <th>Estado</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -67,6 +68,7 @@
                                 <td th:text="${#dates.format(item.fechaDesde, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${#dates.format(item.fechaHasta, 'dd/MM/yyyy')}"></td>
                                 <td th:text="${'$' + #numbers.formatDecimal(item.costo, 1, 2)}"></td>
+                                <td th:text="${item.estadoAlquiler}"></td>
                             </tr>
                             </tbody>
                         </table>

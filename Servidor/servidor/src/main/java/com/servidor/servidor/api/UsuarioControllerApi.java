@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/usuarios")
@@ -19,6 +20,33 @@ public class UsuarioControllerApi extends BaseControllerApi<Usuario, Long> {
     public UsuarioControllerApi(UsuarioService usuarioService) {
         super(usuarioService);
         this.usuarioService = usuarioService;
+    }
+    @Override
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Usuario entidad) {
+        try {
+            System.out.println("=== RECIBIENDO EN API ===");
+            System.out.println("Provider: " + entidad.getProvider());
+            System.out.println("ProviderId: " + entidad.getProviderId());
+            System.out.println("PictureUrl: " + entidad.getPictureUrl());
+            System.out.println("========================");
+            preUpdate(entidad);
+            Optional<Usuario> actualizado = service.modificar(id, entidad);
+
+            if (actualizado.isPresent()) {
+                postUpdate(actualizado.get());
+                return ResponseEntity.status(HttpStatus.OK).body(actualizado.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ErrorResponse("Entidad no encontrada"));
+            }
+        } catch (ErrorServiceException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorResponse("Error al actualizar la entidad"));
+        }
     }
 
     /**

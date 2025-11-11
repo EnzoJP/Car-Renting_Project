@@ -61,6 +61,12 @@
             border-bottom: 2px solid #fe5b29; font-family: 'Poppins', sans-serif;
         }
 
+        .form-section {
+            margin-top: 35px;
+            padding-top: 25px;
+            border-top: 1px solid #f0f0f0;
+        }
+
         .form-group label { color: #363636; font-weight: 600; margin-bottom: 8px; }
         .form-control { border-radius: 10px; border: 2px solid #e0e0e0; padding: 12px 15px; }
         .form-control:focus { border-color: #fe5b29; box-shadow: 0 0 0 0.2rem rgba(254, 91, 41, 0.15); }
@@ -86,7 +92,6 @@
     <!-- Formulario -->
     <form th:action="@{/completar-perfil}" method="post">
 
-        <!-- Información Personal -->
         <div class="form-section">
             <h3 class="section-title"><i class="fa fa-user"></i> Información Personal</h3>
             <div class="row form-row">
@@ -94,14 +99,14 @@
                     <div class="form-group">
                         <label for="nombre">Nombre <span class="required">*</span></label>
                         <input type="text" class="form-control" id="nombre" name="nombre"
-                               th:value="${usuario.nombre}" disabled>
+                               th:value="${cliente.nombre}" disabled>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="apellido">Apellido <span class="required">*</span></label>
                         <input type="text" class="form-control" id="apellido" name="apellido"
-                               th:value="${usuario.apellido}" disabled>
+                               th:value="${cliente.apellido}" disabled>
                     </div>
                 </div>
             </div>
@@ -118,24 +123,23 @@
                     <div class="form-group">
                         <label for="fechaNacimiento">Fecha de Nacimiento <span class="required">*</span></label>
                         <input type="date" class="form-control" id="fechaNacimiento" name="fechaNacimiento"
-                               th:value="${#dates.format(usuario.fechaNacimiento, 'yyyy-MM-dd')}" required>
+                               th:value="${#dates.format(cliente.fechaNacimiento, 'yyyy-MM-dd')}" required>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Documento -->
         <div class="form-section">
-            <h3 class="section-title"><i class="fa fa-id-card"></i> Documento de Identidad</h3>
+            <h3 class="section-title"><i class="fa fa-id-card"></i> Documento y Nacionalidad</h3>
             <div class="row form-row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="tipoDocumento">Tipo de Documento <span class="required">*</span></label>
                         <select class="form-control" id="tipoDocumento" name="tipoDocumento" required>
                             <option value="">Seleccionar...</option>
-                            <option value="DNI" th:selected="${usuario.tipoDocumento == 'DNI'}">DNI</option>
-                            <option value="PASAPORTE" th:selected="${usuario.tipoDocumento == 'PASAPORTE'}">Pasaporte</option>
-                            <option value="CEDULA" th:selected="${usuario.tipoDocumento == 'CEDULA'}">Cédula</option>
+                            <option value="DNI" th:selected="${cliente.tipoDocumento == 'DNI'}">DNI</option>
+                            <option value="PASAPORTE" th:selected="${cliente.tipoDocumento == 'PASAPORTE'}">Pasaporte</option>
+                            <option value="CEDULA" th:selected="${cliente.tipoDocumento == 'CEDULA'}">Cédula</option>
                         </select>
                     </div>
                 </div>
@@ -143,26 +147,100 @@
                     <div class="form-group">
                         <label for="numeroDocumento">Número de Documento <span class="required">*</span></label>
                         <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento"
-                               th:value="${usuario.numeroDocumento}" placeholder="Ej: 12345678" required>
+                               th:value="${cliente.numeroDocumento}" placeholder="Ej: 12345678" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nacionalidadId">Nacionalidad</label>
+                        <select class="form-control" id="nacionalidadId" name="nacionalidadId">
+                            <option value="">Seleccionar...</option>
+                            <option th:each="nac : ${nacionalidades}"
+                                    th:value="${nac.id}"
+                                    th:text="${nac.nombre}"
+                                    th:selected="${cliente.nacionalidad != null && cliente.nacionalidad.id == nac.id}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="direccionEstadia">Dirección de Estadía (Opcional)</label>
+                        <input type="text" class="form-control" id="direccionEstadia" name="direccionEstadia"
+                               th:value="${cliente.direccionEstadia}" placeholder="Ej: Hotel Hyatt, Hab 101">
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Contacto -->
+        <div class="form-section">
+            <h3 class="section-title"><i class="fa fa-map-marker"></i> Dirección de Residencia</h3>
+            <div class="row form-row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="calle">Calle</label>
+                        <input type="text" class="form-control" id="calle" name="calle"
+                               th:value="${cliente.direccion != null ? cliente.direccion.calle : ''}" placeholder="Ej: Av. San Martín">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="numeracion">Numeración</label>
+                        <input type="text" class="form-control" id="numeracion" name="numeracion"
+                               th:value="${cliente.direccion != null ? cliente.direccion.numeracion : ''}" placeholder="Ej: 1234">
+                    </div>
+                </div>
+            </div>
+            <div class="row form-row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="barrio">Barrio</label>
+                        <input type="text" class="form-control" id="barrio" name="barrio"
+                               th:value="${cliente.direccion != null ? cliente.direccion.barrio : ''}" placeholder="Ej: Barrio Bombal">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="manzanaPiso">Manzana / Piso</label>
+                        <input type="text" class="form-control" id="manzanaPiso" name="manzanaPiso"
+                               th:value="${cliente.direccion != null ? cliente.direccion.manzanaPiso : ''}" placeholder="Ej: Mza 2 / Piso 5">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="casaDepartamento">Casa / Depto</label>
+                        <input type="text" class="form-control" id="casaDepartamento" name="casaDepartamento"
+                               th:value="${cliente.direccion != null ? cliente.direccion.casaDepartamento : ''}" placeholder="Ej: Casa 1 / Depto B">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="localidadId">Localidad</label>
+                <select class="form-control" id="localidadId" name="localidadId">
+                    <option value="">Seleccionar...</option>
+                    <option th:each="loc : ${localidades}"
+                            th:value="${loc.id}"
+                            th:text="${loc.nombre + (loc.departamento != null ? ' (' + loc.departamento.nombre + ')' : '')}"
+                            th:selected="${cliente.direccion != null && cliente.direccion.localidad != null && cliente.direccion.localidad.id == loc.id}">
+                    </option>
+                </select>
+            </div>
+        </div>
+
         <div class="form-section">
             <h3 class="section-title"><i class="fa fa-phone"></i> Información de Contacto</h3>
             <div class="form-group">
                 <label for="telefono">Teléfono <span class="required">*</span></label>
                 <input type="tel" class="form-control" id="telefono" name="telefono"
-                       th:value="${usuario.contactos != null && !usuario.contactos.isEmpty() ? usuario.contactos[0].observacion : ''}"
+                       th:value="${cliente.contactos != null && !cliente.contactos.isEmpty() ? cliente.contactos[0].observacion : ''}"
                        placeholder="Ej: +54 9 261 1234567" required>
             </div>
         </div>
 
-        <!-- Botones -->
         <div class="button-group">
-            <button type="button" class="btn-skip" onclick="window.location.href='/home'">
+            <button type="button" class="btn-skip" th:onclick="|window.location.href='@{/}'|">
                 Completar más tarde
             </button>
             <button type="submit" class="btn-submit">

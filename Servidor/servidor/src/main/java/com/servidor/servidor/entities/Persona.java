@@ -30,7 +30,8 @@ public class Persona extends BaseEntity<Long> {
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Contacto> contactos = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id")
     private Direccion direccion;
 
     @ManyToOne(cascade = CascadeType.ALL)

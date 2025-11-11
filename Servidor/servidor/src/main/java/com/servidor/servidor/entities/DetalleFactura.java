@@ -22,6 +22,9 @@ public class DetalleFactura extends BaseEntity<Long> {
 
     @OneToMany
     private List<Alquiler> alquileres = new ArrayList<>();
+    //para codigos promocionales
+    @ManyToOne
+    private Promocion promocion;
 
     @Override
     public Long getId() {

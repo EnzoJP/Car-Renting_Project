@@ -87,17 +87,18 @@ public class UsuarioService extends BaseService<Usuario, Long> {
     @Override
     public Optional<Usuario> modificar(Long id, Usuario usuarioNuevo) throws ErrorServiceException {
         try {
-            // Validación flexible para OAuth2
             validarModificacion(usuarioNuevo);
+
             return repository.findById(id).map(usuarioExistente -> {
                 // Actualizar campos básicos
                 usuarioExistente.setNombre(usuarioNuevo.getNombre());
                 usuarioExistente.setApellido(usuarioNuevo.getApellido());
                 usuarioExistente.setUsername(usuarioNuevo.getUsername());
-                // Solo actualizar password si no está vacío (para OAuth2)
+
                 if (usuarioNuevo.getPassword() != null && !usuarioNuevo.getPassword().isEmpty()) {
                     usuarioExistente.setPassword(usuarioNuevo.getPassword());
                 }
+
                 usuarioExistente.setRol(usuarioNuevo.getRol());
                 usuarioExistente.setFechaNacimiento(usuarioNuevo.getFechaNacimiento());
                 usuarioExistente.setTipoDocumento(usuarioNuevo.getTipoDocumento());
@@ -107,21 +108,26 @@ public class UsuarioService extends BaseService<Usuario, Long> {
                 usuarioExistente.setProvider(usuarioNuevo.getProvider());
                 usuarioExistente.setProviderId(usuarioNuevo.getProviderId());
                 usuarioExistente.setPictureUrl(usuarioNuevo.getPictureUrl());
-                // Actualizar perfilCompleto si tiene los datos necesarios
+                // Actualizar perfilCompleto
                 boolean perfilCompleto = usuarioExistente.getFechaNacimiento() != null
                         && usuarioExistente.getNumeroDocumento() != null
                         && !usuarioExistente.getNumeroDocumento().isEmpty();
                 usuarioExistente.setPerfilCompleto(perfilCompleto);
-
-                if (usuarioNuevo.getContactos() != null) {
-                    // Limpiar contactos existentes
+                // MANEJAR CONTACTOS
+                if (usuarioNuevo.getContactos() != null && !usuarioNuevo.getContactos().isEmpty()) {
                     if (usuarioExistente.getContactos() == null) {
                         usuarioExistente.setContactos(new ArrayList<>());
                     }
+                    // Limpiar contactos existentes
                     usuarioExistente.getContactos().clear();
                     // Agregar nuevos contactos
-                    for (Contacto contacto : usuarioNuevo.getContactos()) {
-                        contacto.setPersona(usuarioExistente);
+                    for (Contacto contactoNuevo : usuarioNuevo.getContactos()) {
+                        // Crear nueva entidad para evitar problemas de ID
+                        Contacto contacto = new Contacto();
+                        contacto.setTipoContacto(contactoNuevo.getTipoContacto());
+                        contacto.setObservacion(contactoNuevo.getObservacion());
+                        contacto.setPersona(usuarioExistente); //relación bidireccional
+                        contacto.setEliminado(false);
                         usuarioExistente.getContactos().add(contacto);
                     }
                 }
@@ -137,21 +143,16 @@ public class UsuarioService extends BaseService<Usuario, Long> {
         }
     }
 
+    // Validación flexible para modificaciones
     private void validarModificacion(Usuario usuario) throws ErrorServiceException {
-        try {
-            if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
-                throw new ErrorServiceException("Debe indicar el nombre del usuario");
-            }
-            if (usuario.getApellido() == null || usuario.getApellido().trim().isEmpty()) {
-                throw new ErrorServiceException("Debe indicar el apellido del usuario");
-            }
-            if (usuario.getUsername() == null || usuario.getUsername().trim().isEmpty()) {
-                throw new ErrorServiceException("Debe indicar el nombre de usuario");
-            }
-        } catch (ErrorServiceException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ErrorServiceException("Error de Sistemas");
+        if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
+            throw new ErrorServiceException("Debe indicar el nombre del usuario");
+        }
+        if (usuario.getApellido() == null || usuario.getApellido().trim().isEmpty()) {
+            throw new ErrorServiceException("Debe indicar el apellido del usuario");
+        }
+        if (usuario.getUsername() == null || usuario.getUsername().trim().isEmpty()) {
+            throw new ErrorServiceException("Debe indicar el nombre de usuario");
         }
     }
 

@@ -2,9 +2,11 @@ package com.servidor.servidor.config;
 
 import com.servidor.servidor.entities.Cliente;
 import com.servidor.servidor.entities.Usuario;
+import com.servidor.servidor.entities.UsuarioCliente;
 import com.servidor.servidor.enums.RolUsuario;
 import com.servidor.servidor.jwt.JwtService;
 import com.servidor.servidor.repositories.ClienteRepository;
+import com.servidor.servidor.repositories.UsuarioClienteRepository;
 import com.servidor.servidor.repositories.UsuarioRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtService jwtService;
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
+    private final UsuarioClienteRepository usuarioClienteRepository;
 
     @Value("${oauth2.success-redirect-url}")
     private String redirectBaseUrl;
@@ -35,8 +39,14 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        // Obtener información del usuario desde OAuth2User
-        String registrationId = getRegistrationId(request); // obtener proveedor
+        // Debug
+        System.out.println("=== ATRIBUTOS DE GOOGLE ===");
+        oAuth2User.getAttributes().forEach((key, value) -> {
+            System.out.println(key + " = " + value);
+        });
+        System.out.println("===========================");
+
+        String registrationId = getRegistrationId(request);
         String email = oAuth2User.getAttribute("email");
         String providerId = getProviderId(oAuth2User, registrationId);
         String pictureUrl = getPictureUrl(oAuth2User, registrationId);
@@ -44,62 +54,35 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String[] nombreCompleto = extraerNombreApellido(name);
         String nombre = nombreCompleto[0];
         String apellido = nombreCompleto[1];
-
-        Usuario usuario = usuarioRepository.findByUsername(email) //Busca o crea usuario
+        // Buscar o crear Usuario
+        Usuario usuario = usuarioRepository.findByUsername(email)
                 .orElseGet(() -> createNewUserFromOAuth2(
-                        email,
-                        nombre,
-                        apellido,
-                        registrationId,
-                        providerId,
-                        pictureUrl
+                        email, nombre, apellido, registrationId, providerId, pictureUrl
                 ));
-
-        if (pictureUrl != null && !pictureUrl.equals(usuario.getPictureUrl())) { // Actualizar la imagen de perfil si ha cambiado
+        // Actualizar imagen de perfil si cambió
+        if (pictureUrl != null && !pictureUrl.equals(usuario.getPictureUrl())) {
             actualizarImagenPerfil(usuario, pictureUrl);
         }
-
-        // ver si ya tiene cliente asociado la cuenta y crearlo si no existe
-        crearClienteSiNoExiste(usuario, nombre, apellido);
-
+        // Crear Cliente y vincular con Usuario
+        crearYVincularCliente(usuario, nombre, apellido);
         // Generar token JWT
         String token = jwtService.getToken(usuario);
-
         // Redirigir con el token
         String redirectUrl = "http://localhost:8050/login-success?token=" + token;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 
-    private Usuario createNewUserFromOAuth2(String email, String nombre, String apellido, String provider, String providerId, String pictureUrl) {
-        Usuario newUser = Usuario.builder()
-                .username(email)
-                .password("") // Sin password para google o facebook
-                .rol(RolUsuario.CLIENTE)
-                .provider(provider)
-                .providerId(providerId)
-                .pictureUrl(pictureUrl) // Solo la URL
-                .perfilCompleto(false)
-                .build();
+    private void crearYVincularCliente(Usuario usuario, String nombre, String apellido) {
+        // Verificar si ya existe la relación Usuario-Cliente
+        Optional<UsuarioCliente> relacionExistente = usuarioClienteRepository.findByUsuarioId(usuario.getId());
 
-        newUser.setNombre(nombre != null ? nombre : "Usuario");
-        newUser.setApellido(apellido != null ? apellido : "");
-        newUser.setImagen(null); // No descargar imagen inicialmente
-        newUser.setEliminado(false);
-
-        return usuarioRepository.save(newUser);
-    }
-
-    private void crearClienteSiNoExiste(Usuario usuario, String nombre, String apellido) {
-        // verifica si ya tiene Cliente asociado
-        Cliente cliente = clienteRepository.findByUsuariosContaining(usuario);
-        if (cliente == null) {
+        if (relacionExistente.isEmpty()) {
             // Crear nuevo Cliente
-            cliente = new Cliente();
+            Cliente cliente = new Cliente();
             cliente.setNombre(nombre != null ? nombre : "Usuario");
             cliente.setApellido(apellido != null ? apellido : "");
             cliente.setDireccionEstadia("Pendiente");
             cliente.setEliminado(false);
-            // Datos heredados de Persona que quedan null hasta completar perfil
             cliente.setFechaNacimiento(null);
             cliente.setTipoDocumento(null);
             cliente.setNumeroDocumento(null);
@@ -108,13 +91,46 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             cliente.setNacionalidad(null);
             cliente.setImagen(null);
 
-            // Asociar Usuario al Cliente
-            List<Usuario> usuarios = new ArrayList<>();
-            usuarios.add(usuario);
-            cliente.setUsuarios(usuarios);
+            cliente = clienteRepository.save(cliente);
+            System.out.println("Cliente creado con ID: " + cliente.getId());
 
-            clienteRepository.save(cliente);
+            // Crear relación Usuario-Cliente
+            UsuarioCliente relacion = new UsuarioCliente();
+            relacion.setUsuario(usuario);
+            relacion.setCliente(cliente);
+            relacion.setEliminado(false);
+
+            usuarioClienteRepository.save(relacion);
+            System.out.println("Relación Usuario-Cliente creada exitosamente");
+        } else {
+            System.out.println("Ya existe relación para Usuario ID: " + usuario.getId());
         }
+    }
+
+    private Usuario createNewUserFromOAuth2(String email, String nombre, String apellido,
+                                            String provider, String providerId, String pictureUrl) {
+        // Si nombre/apellido vienen vacíos, usar parte del email
+        if (nombre == null || nombre.trim().isEmpty()) {
+            String[] emailParts = email.split("@");
+            nombre = emailParts[0]; // Usar parte antes del @
+        }
+        if (apellido == null || apellido.trim().isEmpty()) {
+            apellido = ""; // Dejar vacío, se completará después
+        }
+        Usuario newUser = Usuario.builder()
+                .username(email)
+                .password("")
+                .rol(RolUsuario.CLIENTE)
+                .provider(provider)
+                .providerId(providerId)
+                .pictureUrl(pictureUrl)
+                .perfilCompleto(false)
+                .build();
+        newUser.setNombre(nombre);
+        newUser.setApellido(apellido);
+        newUser.setImagen(null);
+        newUser.setEliminado(false);
+        return usuarioRepository.save(newUser);
     }
 
     private void actualizarImagenPerfil(Usuario usuario, String pictureUrl) {

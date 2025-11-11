@@ -23,7 +23,6 @@ public class ClienteService extends BaseService<Cliente, Long> {
     public Optional<Cliente> modificar(Long id, Cliente clienteNuevo) throws ErrorServiceException {
         try {
             return repository.findById(id).map(clienteExistente -> {
-                // Actualizar campos basicos
                 clienteExistente.setNombre(clienteNuevo.getNombre());
                 clienteExistente.setApellido(clienteNuevo.getApellido());
                 clienteExistente.setFechaNacimiento(clienteNuevo.getFechaNacimiento());
@@ -33,15 +32,22 @@ public class ClienteService extends BaseService<Cliente, Long> {
                 clienteExistente.setImagen(clienteNuevo.getImagen());
                 clienteExistente.setDireccionEstadia(clienteNuevo.getDireccionEstadia());
                 clienteExistente.setNacionalidad(clienteNuevo.getNacionalidad());
-                clienteExistente.setUsuarios(clienteNuevo.getUsuarios());
-                // manejar contactos
-                if (clienteNuevo.getContactos() != null) {
+                //clienteExistente.setUsuarios(clienteNuevo.getUsuarios());
+
+                // MANEJAR CONTACTOS
+                if (clienteNuevo.getContactos() != null && !clienteNuevo.getContactos().isEmpty()) {
                     if (clienteExistente.getContactos() == null) {
                         clienteExistente.setContactos(new ArrayList<>());
                     }
                     clienteExistente.getContactos().clear();
-                    for (Contacto contacto : clienteNuevo.getContactos()) {
-                        contacto.setPersona(clienteExistente);
+
+                    for (Contacto contactoNuevo : clienteNuevo.getContactos()) {
+                        Contacto contacto = new Contacto();
+                        contacto.setTipoContacto(contactoNuevo.getTipoContacto());
+                        contacto.setObservacion(contactoNuevo.getObservacion());
+                        contacto.setPersona(clienteExistente); //relación bidireccional
+                        contacto.setEliminado(false);
+
                         clienteExistente.getContactos().add(contacto);
                     }
                 }
@@ -64,16 +70,18 @@ public class ClienteService extends BaseService<Cliente, Long> {
             if (cliente.getApellido() == null || cliente.getApellido().trim().isEmpty()) {
                 throw new ErrorServiceException("Debe indicar el apellido del cliente");
             }
-            // Validación flexible - algunos campos pueden estar vacíos inicialmente
+            //algunos campos pueden estar vacíos inicialmente
         } catch (ErrorServiceException e) {
             throw e;
         } catch (Exception e) {
             throw new ErrorServiceException("Error de Sistemas");
         }
     }
-
-     // para vista de dashboard
+    // para vista de dashboard
+    /*
     public Cliente findByUsuarioId(Long usuarioId) {
         return clienteRepository.findByUsuarioId(usuarioId);
     }
+    */
+
 }

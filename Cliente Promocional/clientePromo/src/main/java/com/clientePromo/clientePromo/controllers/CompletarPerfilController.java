@@ -52,7 +52,13 @@ public class CompletarPerfilController {
     }
 
     @PostMapping("/completar-perfil")
-    public String completarPerfil(@RequestParam String fechaNacimiento, @RequestParam String tipoDocumento, @RequestParam String numeroDocumento, @RequestParam String telefono, RedirectAttributes redirectAttributes, Model model
+    public String completarPerfil(
+            @RequestParam String fechaNacimiento,
+            @RequestParam String tipoDocumento,
+            @RequestParam String numeroDocumento,
+            @RequestParam String telefono,
+            RedirectAttributes redirectAttributes,
+            Model model
     ) {
         UsuarioDTO usuario = authService.getUsuarioAutenticado();
 
@@ -63,33 +69,55 @@ public class CompletarPerfilController {
         try {
             Date fecha = new SimpleDateFormat("yyyy-MM-dd").parse(fechaNacimiento);
 
-            usuario.setFechaNacimiento(fecha);
-            usuario.setTipoDocumento(tipoDocumento);
-            usuario.setNumeroDocumento(numeroDocumento);
+            // ✅ Crear DTO con TODOS los campos necesarios explícitamente
+            UsuarioDTO usuarioParaActualizar = new UsuarioDTO();
+            usuarioParaActualizar.setId(usuario.getId());
+            usuarioParaActualizar.setNombreUsuario(usuario.getNombreUsuario()); // ← CRÍTICO
+            usuarioParaActualizar.setNombre(usuario.getNombre());
+            usuarioParaActualizar.setApellido(usuario.getApellido());
+            usuarioParaActualizar.setRol(usuario.getRol());
+            usuarioParaActualizar.setProvider(usuario.getProvider());
+            usuarioParaActualizar.setPictureUrl(usuario.getPictureUrl());
 
+            // ✅ Nuevos datos del formulario
+            usuarioParaActualizar.setFechaNacimiento(fecha);
+            usuarioParaActualizar.setTipoDocumento(tipoDocumento);
+            usuarioParaActualizar.setNumeroDocumento(numeroDocumento);
+
+            // ✅ Contacto
             ContactoDTO contacto = new ContactoDTO();
-            contacto.setTipoContacto("PERSONAL"); // Usar enum string
+            contacto.setTipoContacto("PERSONAL");
             contacto.setObservacion(telefono);
-            // Guardar contacto primero
-            ContactoDTO contactoGuardado = contactoService.alta(contacto);
-            // Asignar lista de contactos
-            List<ContactoDTO> contactos = new ArrayList<>();
-            contactos.add(contactoGuardado);
-            usuario.setContactos(contactos);
 
-            usuarioService.modificar(usuario.getId(), usuario);
-            actualizarCliente(usuario, fecha, tipoDocumento, numeroDocumento, contactoGuardado);
-            // Recargar perfil
+            List<ContactoDTO> contactos = new ArrayList<>();
+            contactos.add(contacto);
+            usuarioParaActualizar.setContactos(contactos);
+
+            // ✅ Debug
+            System.out.println("=== ENVIANDO AL SERVIDOR ===");
+            System.out.println("Username (nombreUsuario): " + usuarioParaActualizar.getNombreUsuario());
+            System.out.println("Nombre: " + usuarioParaActualizar.getNombre());
+            System.out.println("Apellido: " + usuarioParaActualizar.getApellido());
+            System.out.println("===========================");
+
+            // ✅ Enviar al servidor
+            usuarioService.modificar(usuario.getId(), usuarioParaActualizar);
+
+            // ✅ Actualizar cliente
+            actualizarCliente(usuario.getId(), fecha, tipoDocumento, numeroDocumento, telefono);
+
+            // ✅ Recargar sesión
             authService.setToken(authService.getToken());
 
             redirectAttributes.addFlashAttribute("mensaje", "¡Perfil completado exitosamente! 😎");
             return "redirect:/cliente/dashboard";
 
         } catch (Exception e) {
-            model.addAttribute("error", "Error al guardar los datos. Verifica los campos e intenta nuevamente.");
-            model.addAttribute("usuario", usuario);
+            System.err.println("ERROR:");
             e.printStackTrace();
-            return "completar-perfil";
+            model.addAttribute("error", "Error al guardar: " + e.getMessage());
+            model.addAttribute("usuario", usuario);
+            return "view/completar-perfil";
         }
     }
 
@@ -112,18 +140,22 @@ public class CompletarPerfilController {
         }
     }
 
-    private void actualizarCliente(UsuarioDTO usuario, Date fecha, String tipoDoc, String nroDoc, ContactoDTO contacto) {
+    private void actualizarCliente(Long usuarioId, Date fecha, String tipoDoc, String nroDoc, String telefono) {
         try {
-            ClienteDTO cliente = clienteService.findByUsuarioId(usuario.getId());
+            ClienteDTO cliente = clienteService.findByUsuarioId(usuarioId);
             if (cliente != null) {
                 cliente.setFechaNacimiento(fecha);
                 cliente.setTipoDocumento(tipoDoc);
                 cliente.setNumeroDocumento(nroDoc);
+                // Crear contacto para el cliente
+                ContactoDTO contactoCliente = new ContactoDTO();
+                contactoCliente.setTipoContacto("PERSONAL");
+                contactoCliente.setObservacion(telefono);
 
-                List<ContactoDTO> contactos = new ArrayList<>();
-                contactos.add(contacto);
-                cliente.setContactos(contactos);
-
+                if (cliente.getContactos() == null) {
+                    cliente.setContactos(new ArrayList<>());
+                }
+                cliente.getContactos().add(contactoCliente);
                 clienteService.modificar(cliente.getId(), cliente);
             }
         } catch (Exception e) {

@@ -89,4 +89,9 @@ public class InicioController {
         return "redirect:/cliente/dashboard";
     }
 
+    @GetMapping("/register")
+    public String mostrarFormularioRegistro() {
+        return "registro";
+    }
+
 }

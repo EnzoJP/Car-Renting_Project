@@ -11,4 +11,5 @@ public interface UsuarioRepository extends BaseRepository<Usuario, Long> {
 
     @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.contactos WHERE u.id = :id")
     Optional<Usuario> findByIdWithContactos(@Param("id") Long id);
+
 }

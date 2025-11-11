@@ -36,8 +36,6 @@ public class Persona extends BaseEntity<Long> {
     @ManyToOne
     private Imagen imagen;
 
-    @OneToMany
-    private java.util.List<Usuario> usuarios;
 
     @Override
     public Long getId() {

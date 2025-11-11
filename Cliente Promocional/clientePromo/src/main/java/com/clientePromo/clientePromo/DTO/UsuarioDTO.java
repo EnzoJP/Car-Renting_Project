@@ -1,5 +1,6 @@
 package com.clientePromo.clientePromo.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,6 +21,7 @@ public class UsuarioDTO implements Identifiable<Long> {
     private List<ContactoDTO> contactos;
     private DireccionDTO direccion;
     private ImagenDTO imagen;
+    @JsonProperty("username")
     private String nombreUsuario;
     private String clave;
     private String rol;

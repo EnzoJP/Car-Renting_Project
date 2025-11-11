@@ -26,6 +26,8 @@ public class SecurityConfig {
     {
         return http
                 .csrf(csrf -> csrf.disable())
+                // para poder hacer peticiones entre las apps
+                .cors(cors -> {})
 
                 .authorizeHttpRequests(authRequest ->
                         authRequest
@@ -33,6 +35,10 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/login", "/auth/register").permitAll()
                                 // OAuth2 también público
                                 .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                                // para pag institucional
+                                .requestMatchers("/api/v1/caracteristicavehiculos/disponibles").permitAll()
+                                .requestMatchers("/api/v1/costovehiculos").permitAll()
+
                                 // TODO LO DEMÁS requiere autenticación (incluyendo /auth/perfil)
                                 .anyRequest().authenticated()
                 )

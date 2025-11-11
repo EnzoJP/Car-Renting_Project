@@ -3,10 +3,17 @@ package com.servidor.servidor.services;
 import com.servidor.servidor.entities.Vehiculo;
 import com.servidor.servidor.exceptions.ErrorServiceException;
 import com.servidor.servidor.repositories.VehiculoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class VehiculoService extends BaseService<Vehiculo, Long> {
+
+    @Autowired
+    private CaracteristicaVehiculoService caracteristicaVehiculoService;
 
     public VehiculoService(VehiculoRepository repository) {
         super(repository);
@@ -26,5 +33,57 @@ public class VehiculoService extends BaseService<Vehiculo, Long> {
         } catch (Exception e) {
             throw new ErrorServiceException("Error de Sistemas");
         }
+    }
+
+    @Override
+    @Transactional
+    public Vehiculo alta(Vehiculo vehiculo) throws ErrorServiceException {
+        Vehiculo guardado = super.alta(vehiculo);
+
+        // Recalcular las cantidades de la característica asociada
+        if (guardado.getCaracteristicaVehiculo() != null) {
+            caracteristicaVehiculoService.recalcularCantidades(
+                    guardado.getCaracteristicaVehiculo().getId()
+            );
+        }
+
+        return guardado;
+    }
+
+    @Override
+    @Transactional
+    public Optional<Vehiculo> modificar(Long id, Vehiculo vehiculo) throws ErrorServiceException {
+        Optional<Vehiculo> modificado = super.modificar(id, vehiculo);
+
+        if (modificado.isPresent() && modificado.get().getCaracteristicaVehiculo() != null) {
+            caracteristicaVehiculoService.recalcularCantidades(
+                    modificado.get().getCaracteristicaVehiculo().getId()
+            );
+        }
+
+        return modificado;
+    }
+
+    /**
+     * Sobrescribe bajaLogica para recalcular cantidades al eliminar un vehículo
+     */
+    @Override
+    @Transactional
+    public boolean bajaLogica(Long id) throws ErrorServiceException {
+        Vehiculo vehiculo = repository.findById(id)
+                .orElseThrow(() -> new ErrorServiceException("Vehículo no encontrado"));
+
+        Long caracteristicaId = vehiculo.getCaracteristicaVehiculo() != null
+                ? vehiculo.getCaracteristicaVehiculo().getId()
+                : null;
+
+        boolean eliminado = super.bajaLogica(id);
+
+        //recalcular las cantidades de la característica asociada
+        if (eliminado && caracteristicaId != null) {
+            caracteristicaVehiculoService.recalcularCantidades(caracteristicaId);
+        }
+
+        return eliminado;
     }
 }

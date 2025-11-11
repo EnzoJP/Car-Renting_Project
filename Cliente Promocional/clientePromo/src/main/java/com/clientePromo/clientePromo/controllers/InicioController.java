@@ -1,8 +1,11 @@
 package com.clientePromo.clientePromo.controllers;
 
+import com.clientePromo.clientePromo.DTO.CaracteristicaVehiculoDTO;
 import com.clientePromo.clientePromo.DTO.UsuarioDTO;
 import com.clientePromo.clientePromo.auth.AuthService;
 import com.clientePromo.clientePromo.models.WeatherResponse;
+import com.clientePromo.clientePromo.services.CaracteristicaVehiculoService;
+import com.clientePromo.clientePromo.services.CostoVehiculoService;
 import com.clientePromo.clientePromo.services.DolarService;
 import com.clientePromo.clientePromo.services.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,33 +23,47 @@ public class InicioController {
     private final AuthService authService;
     private final WeatherService weatherService;
     private final DolarService dolarService;
+    private final CaracteristicaVehiculoService caracteristicaVehiculoService;
+    private final CostoVehiculoService costoVehiculoService;
 
-    // ¡CORREGIDO! Constructor para inyectar TODOS los servicios
     @Autowired
-    public InicioController(AuthService authService, WeatherService weatherService, DolarService dolarService) {
+    public InicioController(AuthService authService,
+                            WeatherService weatherService,
+                            DolarService dolarService,
+                            CaracteristicaVehiculoService caracteristicaVehiculoService,
+                            CostoVehiculoService costoVehiculoService) {
         this.authService = authService;
         this.weatherService = weatherService;
         this.dolarService = dolarService;
+        this.caracteristicaVehiculoService = caracteristicaVehiculoService;
+        this.costoVehiculoService = costoVehiculoService;
     }
+
 
     @GetMapping({"/", "/inicio"})
     public String inicio(Model model) {
         model.addAttribute("titulo", "My Car - Sprint");
-        // Cargar dólar
+
+        // Cargar dolar
         List<String> dolarData = dolarService.obtenerCompraVentaFecha();
         if (dolarData != null && dolarData.size() >= 2) {
-            // model.addAttribute("compra", dolarData.get(0));
             model.addAttribute("venta", dolarData.get(1));
-            // model.addAttribute("fecha", dolarData.size() > 2 ? dolarData.get(2) : "");
         }
-
         // Cargar clima
         WeatherResponse weather = weatherService.getWeatherByCity("Godoy Cruz").block();
         model.addAttribute("weather", weather);
 
-        model.addAttribute("titulo", "My Car - Sprint");
+        //cargar vehiculos disponibles
+        List<CaracteristicaVehiculoDTO> vehiculosDisponibles =
+                caracteristicaVehiculoService.obtenerVehiculosDisponibles();
+        model.addAttribute("vehiculos", vehiculosDisponibles);
+
+        //pasar el service de costos para usar en la vista
+        model.addAttribute("costoService", costoVehiculoService);
+
         return "index";
     }
+
 
     @GetMapping("/login")
     public String getLogin(Model model) {

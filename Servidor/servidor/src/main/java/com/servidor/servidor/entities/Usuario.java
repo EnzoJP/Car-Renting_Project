@@ -21,6 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Usuario extends Persona implements UserDetails {
+    //evitar duplicados
+    @Column(unique = true, nullable = false)
     private String username;
     private String password;
     @Enumerated(EnumType.STRING)

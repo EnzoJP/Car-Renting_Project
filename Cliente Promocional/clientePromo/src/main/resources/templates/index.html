@@ -169,7 +169,7 @@
                                 <h1 class="banner_taital">Alquiler de Autos <br><span style="color: #fe5b29;">Para Ti</span></h1>
                                 <p class="banner_text">Alquila el auto que necesitas de forma fácil, rápida y segura. ¡La libertad de viajar te espera!</p>
                                 <div class="btn_main">
-                                    <div class="contact_bt active"><a href="#">Contáctanos</a></div>
+                                    <div class="contact_bt active"><a href="#gallery">Ver Vehículos</a></div>
                                 </div>
                             </div>
                         </div>
@@ -179,7 +179,7 @@
                                 <h1 class="banner_taital">Car Rent <br><span style="color: #fe5b29;">For You</span></h1>
                                 <p class="banner_text">Rent the car you need quickly, easily, and securely. The freedom to travel is waiting for you!</p>
                                 <div class="btn_main">
-                                    <div class="contact_bt active"><a href="#">Contact Us</a></div>
+                                    <div class="contact_bt active"><a href="#gallery">View Vehicles</a></div>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +200,6 @@
         </div>
     </div>
 </div>
-
 <!-- Banner Section End -->
 
 <!-- About Section Start -->
@@ -225,50 +224,6 @@
 </div>
 <!-- About Section End -->
 
-<!-- Search Section -->
-<div id="services" class="search_section">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h1 class="search_taital">Busca tu auto ideal</h1>
-                <p class="search_text">Using 'Content here, content here', making it look like readable</p>
-                <div class="container">
-                    <div class="select_box_section">
-                        <div class="select_box_main">
-                            <div class="row">
-                                <div class="col-md-3 select-outline">
-                                    <select class="mdb-select md-form md-outline colorful-select dropdown-primary">
-                                        <option value="" disabled selected>Any Brand</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 select-outline">
-                                    <select class="mdb-select md-form md-outline colorful-select dropdown-primary">
-                                        <option value="" disabled selected>Any type</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 select-outline">
-                                    <select class="mdb-select md-form md-outline colorful-select dropdown-primary">
-                                        <option value="" disabled selected>Price</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="search_btn"><a href="#">Search Now</a></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- Gallery Section Start -->
 <div id="gallery" class="gallery_section layout_padding">
     <div class="container">
@@ -279,34 +234,58 @@
         </div>
         <div class="gallery_section_2">
             <div class="row">
-                <div class="col-md-4">
+                <!-- Iteramos sobre los vehículos disponibles -->
+                <div class="col-md-4" th:each="vehiculo : ${vehiculos}">
                     <div class="gallery_box">
                         <div class="gallery_img">
-                            <img th:src="@{/images/img-1.png}" alt="Car">
+                            <!-- Mostramos la imagen del vehículo -->
+                            <img th:if="${vehiculo.imagen != null and vehiculo.imagen.base64 != null}"
+                                 th:src="'data:' + ${vehiculo.imagen.mime} + ';base64,' + ${vehiculo.imagen.base64}"
+                                 alt="Vehículo"
+                                 class="vehicle-image">
+                            <img th:unless="${vehiculo.imagen != null and vehiculo.imagen.base64 != null}"
+                                 th:src="@{/images/img-1.png}"
+                                 alt="Sin imagen"
+                                 class="vehicle-image">
                         </div>
-                        <h3 class="types_text">Toyota car</h3>
-                        <p class="looking_text">Start per day $4500</p>
-                        <div class="read_bt"><a href="#">Book Now</a></div>
+
+                        <h3 class="types_text" th:text="${vehiculo.marca} + ' ' + ${vehiculo.modelo}">Marca Modelo</h3>
+
+                        <!-- Características del vehículo -->
+                        <p class="car-features">
+                            <span><i class="fa fa-calendar"></i> <span th:text="${vehiculo.anio}">2024</span></span>
+                            <span><i class="fa fa-users"></i> <span th:text="${vehiculo.cantidadAsiento}">5</span> asientos</span>
+                            <span><i class="fa fa-car"></i> <span th:text="${vehiculo.cantidadPuerta}">4</span> puertas</span>
+                        </p>
+
+                        <!-- Cantidad disponible -->
+                        <p class="availability-text">
+                            <i class="fa fa-check-circle"></i>
+                            <span th:text="${vehiculo.cantidadTotalVehiculo - vehiculo.cantidadVehiculoAlquilado} + ' unidad' + (${vehiculo.cantidadTotalVehiculo - vehiculo.cantidadVehiculoAlquilado} != 1 ? 'es' : '') + ' disponible' + (${vehiculo.cantidadTotalVehiculo - vehiculo.cantidadVehiculoAlquilado} != 1 ? 's' : '')">
+                                0 disponibles
+                            </span>
+                        </p>
+
+                        <!-- Precio por día -->
+                        <p class="looking_text">
+                            <span th:if="${costoService.obtenerCostoActual(vehiculo.id) != null}">
+                                Desde $<span th:text="${#numbers.formatDecimal(costoService.obtenerCostoActual(vehiculo.id).costo, 1, 'COMMA', 2, 'POINT')}">0</span> / día
+                            </span>
+                            <span th:unless="${costoService.obtenerCostoActual(vehiculo.id) != null}" class="price-consult">
+                                Consultar precio
+                            </span>
+                        </p>
+
+                        <div class="read_bt"><a th:href="@{/login}">Reservar Ahora</a></div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="gallery_box">
-                        <div class="gallery_img">
-                            <img th:src="@{/images/img-2.png}" alt="Car">
-                        </div>
-                        <h3 class="types_text">Toyota car</h3>
-                        <p class="looking_text">Start per day $4500</p>
-                        <div class="read_bt"><a href="#">Book Now</a></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="gallery_box">
-                        <div class="gallery_img">
-                            <img th:src="@{/images/img-3.png}" alt="Car">
-                        </div>
-                        <h3 class="types_text">Toyota car</h3>
-                        <p class="looking_text">Start per day $4500</p>
-                        <div class="read_bt"><a href="#">Book Now</a></div>
+
+                <!-- Mensaje si no hay vehículos disponibles -->
+                <div class="col-md-12" th:if="${vehiculos == null or #lists.isEmpty(vehiculos)}">
+                    <div class="no-vehicles-message">
+                        <i class="fa fa-car" style="font-size: 64px; color: #fe5b29; opacity: 0.3;"></i>
+                        <h3>No hay vehículos disponibles</h3>
+                        <p>Todos nuestros vehículos están actualmente alquilados. Por favor, vuelva a consultar más tarde.</p>
                     </div>
                 </div>
             </div>
@@ -314,6 +293,135 @@
     </div>
 </div>
 <!-- Gallery Section End -->
+
+<!-- Estilos adicionales para la sección de vehículos -->
+<style>
+    .vehicle-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .car-features {
+        font-size: 13px;
+        color: #666;
+        margin: 15px 0;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .car-features span {
+        white-space: nowrap;
+        margin: 3px 5px;
+    }
+
+    .car-features i {
+        color: #fe5b29;
+        margin-right: 5px;
+    }
+
+    .availability-text {
+        font-size: 14px;
+        font-weight: 600;
+        color: #44c14a;
+        margin: 10px 0;
+        text-align: center;
+    }
+
+    .availability-text i {
+        margin-right: 5px;
+    }
+
+    .looking_text {
+        font-size: 22px;
+        font-weight: 700;
+        color: #fe5b29;
+        margin: 15px 0;
+        text-align: center;
+    }
+
+    .price-consult {
+        font-size: 16px;
+        color: #999;
+        font-style: italic;
+    }
+
+    .gallery_box {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        margin-bottom: 30px;
+        height: 100%;
+    }
+
+    .gallery_box:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .types_text {
+        font-size: 20px;
+        font-weight: 700;
+        color: #333;
+        margin: 15px 0 10px;
+        text-align: center;
+    }
+
+    .read_bt a {
+        display: inline-block;
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #fe5b29 0%, #ff7849 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-align: center;
+        width: 100%;
+    }
+
+    .read_bt a:hover {
+        background: linear-gradient(135deg, #e54a1f 0%, #ff6839 100%);
+        transform: scale(1.05);
+    }
+
+    .no-vehicles-message {
+        text-align: center;
+        padding: 60px 20px;
+        background: #f8f9fa;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .no-vehicles-message h3 {
+        color: #333;
+        font-size: 24px;
+        margin: 20px 0 10px;
+    }
+
+    .no-vehicles-message p {
+        color: #666;
+        font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        .car-features {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .vehicle-image {
+            height: 200px;
+        }
+    }
+</style>
 
 <!-- Choose Section Start -->
 <div class="choose_section layout_padding">
@@ -341,17 +449,16 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="icon_1">
-                        <img th:src="@{/images/icon-3.png}" alt="Drivers">
+                        <img th:src="@{/images/icon-3.png}" alt="Mantenimiento">
                     </div>
-                    <h4 class="safety_text">Conductores Profesionales</h4>
-                    <p class="ipsum_text">Contamos con conductores altamente capacitados y experimentados, que brindan un servicio de calidad y te garantizan un viaje cómodo y seguro.</p>
+                    <h4 class="safety_text">Vehículos en Perfecto Estado</h4>
+                    <p class="ipsum_text">Nuestros autos son revisados y mantenidos regularmente por nuestros mecánicos para garantizar el mejor rendimiento y tu total tranquilidad al conducir.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <!-- Choose Section End -->
-
 
 <!-- Client Section Start -->
 <div id="client" class="client_section layout_padding">
@@ -361,7 +468,7 @@
                 <div class="carousel-item active">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1 class="client_taital">What Says Customers</h1>
+                            <h1 class="client_taital">Lo que dicen nuestros clientes</h1>
                         </div>
                     </div>
                     <div class="client_section_2">
@@ -369,10 +476,10 @@
                             <div class="col-md-6">
                                 <div class="client_taital_box">
                                     <div class="client_img">
-                                        <img th:src="@{/images/client-img1.png}" alt="Client">
+                                        <img th:src="@{/images/client-img1.jpeg}" alt="Client">
                                     </div>
-                                    <h3 class="moark_text">Hannery</h3>
-                                    <p class="client_text">It is a long established fact that a reader will be distracted by the readable content of a page</p>
+                                    <h3 class="moark_text">Lionel Scaloni</h3>
+                                    <p class="client_text">Excelente servicio, los vehículos están en perfectas condiciones y el personal es muy amable. Definitivamente volveré a alquilar con ellos cuando regrese a Mendoza para mis carreras en bici</p>
                                 </div>
                                 <div class="quick_icon">
                                     <img th:src="@{/images/quick-icon.png}" alt="Quote">
@@ -381,10 +488,10 @@
                             <div class="col-md-6">
                                 <div class="client_taital_box">
                                     <div class="client_img">
-                                        <img th:src="@{/images/client-img2.png}" alt="Client">
+                                        <img th:src="@{/images/client-img2.jpg}" alt="Client">
                                     </div>
-                                    <h3 class="moark_text">Channery</h3>
-                                    <p class="client_text">It is a long established fact that a reader will be distracted by the readable content of a page</p>
+                                    <h3 class="moark_text">Soledad Pastorutti</h3>
+                                    <p class="client_text">La mejor experiencia de alquiler que he tenido. Todo el proceso fue rápido y sencillo. Los recomiendo ampliamente. Nos vemos en Vendimia!</p>
                                 </div>
                                 <div class="quick_icon">
                                     <img th:src="@{/images/quick-icon.png}" alt="Quote">
@@ -513,36 +620,3 @@
         $('a[href^="#"]').on('click', function(event) {
             var target = $(this.getAttribute('href'));
             if(target.length) {
-                event.preventDefault();
-                $('html, body').stop().animate({
-                    scrollTop: target.offset().top - 80 // 80px de offset para el navbar fijo
-                }, 800); // Duración de la animación en milisegundos
-
-                // Cerrar el menú móvil si está abierto
-                if($('.navbar-collapse').hasClass('show')) {
-                    $('.navbar-toggler').click();
-                }
-            }
-        });
-
-        // Marcar el enlace activo según la sección visible
-        $(window).on('scroll', function() {
-            var scrollPos = $(document).scrollTop() + 100;
-
-            $('a[href^="#"]').each(function () {
-                var currLink = $(this);
-                var refElement = $(currLink.attr("href"));
-
-                if (refElement.length && refElement.position().top <= scrollPos &&
-                    refElement.position().top + refElement.height() > scrollPos) {
-                    $('a[href^="#"]').removeClass("active");
-                    currLink.addClass("active");
-                } else {
-                    currLink.removeClass("active");
-                }
-            });
-        });
-    });
-</script>
-</body>
-</html>

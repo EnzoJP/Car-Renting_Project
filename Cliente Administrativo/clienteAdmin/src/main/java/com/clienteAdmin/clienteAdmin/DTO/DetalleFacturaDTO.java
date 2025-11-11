@@ -12,4 +12,6 @@ public class DetalleFacturaDTO implements Identifiable<Long> {
     private int cantidad;
     private double subtotal;
     private List<AlquilerDTO> alquileres;
+    //cupon promocional
+    private PromocionDTO promocion;
 }

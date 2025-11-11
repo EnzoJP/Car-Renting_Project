@@ -62,13 +62,25 @@
                             </a>
                         </nav>
                     </div>
+
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePromociones" aria-expanded="false" aria-controls="#collapsePromociones">
+                        <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
+                        Promociones
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapsePromociones" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" th:href="@{/admin/promociones/list}">
+                                <i class="fas fa-th me-1"></i> Menú Principal
+                            </a>
+                        </nav>
+                    </div>
                     <div class="sb-sidenav-menu-heading">Reportes</div>
 
                     <a class="nav-link" th:href="@{/generar-pdf}" target="_blank">
                         <div class="sb-nav-link-icon"><i class="fas fa-file-pdf"></i></div>
                         PDF Clientes
                     </a>
-
 
                     <a class="nav-link" th:href="@{/generar-excel.xlsx}" target="_blank" id="excelLink">
                         <div class="sb-nav-link-icon"><i class="fas fa-file-excel"></i></div>
@@ -84,6 +96,4 @@
             </div>
         </nav>
     </div>
-
-
 </div>

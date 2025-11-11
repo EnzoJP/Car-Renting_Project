@@ -95,6 +95,11 @@ public class AuthService {
         usuario.setTipoDocumento((String) data.get("tipoDocumento"));
         usuario.setNumeroDocumento((String) data.get("numeroDocumento"));
 
+        usuario.setProvider((String) data.get("provider"));
+        usuario.setProviderId((String) data.get("providerId"));
+        usuario.setPictureUrl((String) data.get("pictureUrl"));
+        usuario.setPerfilCompleto((Boolean) data.get("perfilCompleto"));
+
         // Fecha de nacimiento
         Object fechaObj = data.get("fechaNacimiento");
         if (fechaObj instanceof String fechaStr) {
@@ -119,6 +124,12 @@ public class AuthService {
             }
             usuario.setContactos(contactos);
         }
+        //Debug
+        System.out.println("=== MAPEANDO USUARIO DESDE SERVIDOR ===");
+        System.out.println("Provider: " + usuario.getProvider());
+        System.out.println("ProviderId: " + usuario.getProviderId());
+        System.out.println("PictureUrl: " + usuario.getPictureUrl());
+        System.out.println("======================================");
 
         return usuario;
     }

@@ -87,6 +87,12 @@ public class UsuarioService extends BaseService<Usuario, Long> {
     @Override
     public Optional<Usuario> modificar(Long id, Usuario usuarioNuevo) throws ErrorServiceException {
         try {
+            System.out.println("=== DEBUG MODIFICAR USUARIO ===");
+            System.out.println("ID: " + id);
+            System.out.println("Provider recibido: " + usuarioNuevo.getProvider());
+            System.out.println("ProviderId recibido: " + usuarioNuevo.getProviderId());
+            System.out.println("PictureUrl recibido: " + usuarioNuevo.getPictureUrl());
+            System.out.println("===============================");
             validarModificacion(usuarioNuevo);
 
             return repository.findById(id).map(usuarioExistente -> {

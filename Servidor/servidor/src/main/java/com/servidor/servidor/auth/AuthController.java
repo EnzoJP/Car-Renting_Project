@@ -51,6 +51,7 @@ public class AuthController {
         perfil.put("apellido", usuario.getApellido());
         perfil.put("rol", usuario.getRol());
         perfil.put("provider", usuario.getProvider());
+        perfil.put("providerId", usuario.getProviderId());
         perfil.put("pictureUrl", usuario.getPictureUrl());
         perfil.put("perfilCompleto", usuario.getPerfilCompleto());
 

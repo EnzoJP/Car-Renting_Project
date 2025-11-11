@@ -27,6 +27,7 @@ public class UsuarioDTO implements Identifiable<Long> {
     private String rol;
     // OAuth2
     private String provider; // "GOOGLE", "FACEBOOK", "LOCAL"
+    private String providerId;
     private String pictureUrl; // URL de la foto de perfil
     private Boolean perfilCompleto; // Si completó todos los datos
 }

@@ -254,12 +254,17 @@
             <div class="profile-card">
 
                 <!-- Imagen de perfil -->
-                <img th:if="${cliente != null and cliente.imagen != null}"
+                <img th:if="${usuario != null and usuario.pictureUrl != null and !usuario.pictureUrl.isEmpty()}"
+                     th:src="${usuario.pictureUrl}"
+                     alt="Foto de Perfil"
+                     class="profile-pic">
+
+                <img th:if="${(usuario == null or usuario.pictureUrl == null or usuario.pictureUrl.isEmpty()) and cliente != null and cliente.imagen != null}"
                      th:src="@{/cliente/mi-imagen}"
                      alt="Foto de Perfil"
                      class="profile-pic">
 
-                <img th:if="${cliente == null or cliente.imagen == null}"
+                <img th:if="${(usuario == null or usuario.pictureUrl == null or usuario.pictureUrl.isEmpty()) and (cliente == null or cliente.imagen == null)}"
                      th:src="@{/images/client-img1.png}"
                      alt="Foto de Perfil"
                      class="profile-pic">

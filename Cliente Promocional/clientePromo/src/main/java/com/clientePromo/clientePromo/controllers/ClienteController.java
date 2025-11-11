@@ -52,6 +52,7 @@ public class ClienteController {
             //busvo x usuario
             ClienteDTO cliente = clienteService.findByUsuarioId(usuarioLogueado.getId());
             model.addAttribute("cliente", cliente);
+            model.addAttribute("usuario", usuarioLogueado);
             System.out.println(cliente.getId());
             System.out.println(usuarioLogueado.getId());
             //historial de alquileres

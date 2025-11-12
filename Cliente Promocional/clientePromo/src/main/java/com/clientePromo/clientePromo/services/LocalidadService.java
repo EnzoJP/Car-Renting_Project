@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class LocalidadService extends BaseServiceClient<LocalidadDTO, Long> {
     public LocalidadService() {
-        super("http://localhost:9000/api/v1/localidades", LocalidadDTO.class);
+        super("https://api.sprintproject.tech/api/v1/localidades", LocalidadDTO.class);
     }
 }

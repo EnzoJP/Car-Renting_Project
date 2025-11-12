@@ -17,7 +17,7 @@ public class ClienteService extends BaseServiceClient<ClienteDTO, Long> {
 
     @Autowired
     public ClienteService(AuthService authService, RestTemplate restTemplate) {
-        super("http://localhost:9000/api/v1/clientes", ClienteDTO.class);
+        super("https://api.sprintproject.tech/api/v1/clientes", ClienteDTO.class);
         this.authService = authService;
         this.restTemplate = restTemplate;
     }

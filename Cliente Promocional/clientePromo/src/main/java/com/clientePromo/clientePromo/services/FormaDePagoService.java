@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class FormaDePagoService extends BaseServiceClient<FormaDePagoDTO, Long> {
     public FormaDePagoService() {
-        super("http://localhost:9000/api/v1/formadepagos", FormaDePagoDTO.class);
+        super("https://api.sprintproject.tech/api/v1/formadepagos", FormaDePagoDTO.class);
     }
 }

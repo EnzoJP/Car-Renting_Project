@@ -15,7 +15,7 @@ public class FacturaReportService {
     @Autowired
     private AuthService authService;
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String baseUrl = "http://localhost:9000/api/v1/facturas/reportes";
+    private final String baseUrl = "https://api.sprintproject.tech/api/v1/facturas/reportes";
 
     //Descarga la factura PDF de un alquiler específico
     public byte[] descargarFacturaPorAlquiler(Long alquilerId) {

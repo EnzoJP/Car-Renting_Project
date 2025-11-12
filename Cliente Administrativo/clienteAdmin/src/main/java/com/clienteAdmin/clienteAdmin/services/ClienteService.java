@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ClienteService extends BaseServiceClient<ClienteDTO, Long> {
     public ClienteService() {
-        super("http://localhost:9000/api/v1/clientes", ClienteDTO.class);
+        super("https://api.sprintproject.tech/api/v1/clientes", ClienteDTO.class);
     }
 }

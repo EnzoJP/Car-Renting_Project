@@ -20,7 +20,7 @@ public class AlquilerService extends BaseServiceClient<AlquilerDTO, Long> {
     private final ObjectMapper objectMapper;
 
     public AlquilerService() {
-        super("http://localhost:9000/api/v1/alquileres", AlquilerDTO.class);
+        super("https://api.sprintproject.tech/api/v1/alquileres", AlquilerDTO.class);
 
         // Configurar ObjectMapper para manejar Fechas (Date)
         this.objectMapper = new ObjectMapper();

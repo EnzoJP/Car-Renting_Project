@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DocumentacionService extends BaseServiceClient<DocumentacionDTO, Long> {
     public DocumentacionService() {
-        super("http://localhost:9000/api/v1/documentaciones", DocumentacionDTO.class);
+        super("https://api.sprintproject.tech/api/v1/documentaciones", DocumentacionDTO.class);
     }
 }

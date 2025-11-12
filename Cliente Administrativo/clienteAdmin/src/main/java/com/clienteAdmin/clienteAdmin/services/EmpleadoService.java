@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class EmpleadoService extends BaseServiceClient<EmpleadoDTO, Long> {
 
     public EmpleadoService() {
-        super("http://localhost:9000/api/v1/empleados", EmpleadoDTO.class);
+        super("https://api.sprintproject.tech/api/v1/empleados", EmpleadoDTO.class);
     }
 
     public EmpleadoDTO obtenerEmpleadoActual() {

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PersonaService extends BaseServiceClient<PersonaDTO, Long> {
     public PersonaService() {
-        super("http://localhost:9000/api/v1/personas", PersonaDTO.class);
+        super("https://api.sprintproject.tech/api/v1/personas", PersonaDTO.class);
     }
 }

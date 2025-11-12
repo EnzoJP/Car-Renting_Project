@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class PromocioService extends  BaseServiceClient<PromocionDTO, Long> {
     public PromocioService() {
-        super("http://localhost:9000/api/v1/promociones", PromocionDTO.class);
+        super("https://api.sprintproject.tech/api/v1/promociones", PromocionDTO.class);
     }
 }

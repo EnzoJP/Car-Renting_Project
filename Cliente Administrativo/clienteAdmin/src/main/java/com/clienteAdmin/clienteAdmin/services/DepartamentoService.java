@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DepartamentoService extends BaseServiceClient<DepartamentoDTO, Long> {
     public DepartamentoService() {
-        super("http://localhost:9000/api/v1/departamentos", DepartamentoDTO.class);
+        super("https://api.sprintproject.tech/api/v1/departamentos", DepartamentoDTO.class);
     }
 }

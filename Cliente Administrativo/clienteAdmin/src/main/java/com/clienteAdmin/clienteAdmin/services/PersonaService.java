@@ -16,7 +16,7 @@ import java.util.List;
 public class PersonaService extends BaseServiceClient<PersonaDTO, Long> {
 
     public PersonaService() {
-        super("http://localhost:9000/api/v1/personas", PersonaDTO.class);
+        super("https://api.sprintproject.tech/api/v1/personas", PersonaDTO.class);
     }
     /**
      * Llama al endpoint del servidor /api/v1/personas/clientes-activos

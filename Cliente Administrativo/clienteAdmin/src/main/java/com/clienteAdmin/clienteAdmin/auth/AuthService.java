@@ -42,7 +42,7 @@ public class AuthService {
 
 
     public boolean login(String username, String password) {
-        String loginUrl = "http://localhost:9000/auth/login";
+        String loginUrl = "https://api.sprintproject.tech/auth/login";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -62,7 +62,7 @@ public class AuthService {
             }
 
             this.token = response.getBody().getToken();
-            String perfilUrl = "http://localhost:9000/auth/perfil"; //
+            String perfilUrl = "https://api.sprintproject.tech/auth/perfil"; //
 
             HttpHeaders authHeaders = authHeaders();
             HttpEntity<Void> perfilRequest = new HttpEntity<>(authHeaders);

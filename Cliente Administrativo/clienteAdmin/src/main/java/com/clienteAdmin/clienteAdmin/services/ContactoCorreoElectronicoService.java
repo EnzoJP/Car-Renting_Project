@@ -10,7 +10,7 @@ import java.util.List;
 public class ContactoCorreoElectronicoService extends BaseServiceClient<ContactoCorreoElectronicoDTO, Long> {
 
     public ContactoCorreoElectronicoService() {
-        super("http://localhost:9000/api/v1/contactocorreoelectronicos", ContactoCorreoElectronicoDTO.class);
+        super("https://api.sprintproject.tech/api/v1/contactocorreoelectronicos", ContactoCorreoElectronicoDTO.class);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class AuthService {
     private UsuarioDTO usuarioAutenticado;
 
     public boolean login(String username, String password) {
-        String url = "http://localhost:9000/auth/login";
+        String url = "https://api.sprintproject.tech/auth/login";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -56,7 +56,7 @@ public class AuthService {
 
     //buscamos perfil
     private boolean fetchUsuarioAutenticado() {
-        String url = "http://localhost:9000/auth/perfil";
+        String url = "https://api.sprintproject.tech/auth/perfil";
 
         try {
             HttpEntity<Void> entity = new HttpEntity<>(authHeaders());

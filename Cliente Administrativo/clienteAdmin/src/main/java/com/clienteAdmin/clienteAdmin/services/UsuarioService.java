@@ -11,7 +11,7 @@ import java.util.Map;
 @Service
 public class UsuarioService extends BaseServiceClient<UsuarioDTO, Long> {
     public UsuarioService() {
-        super("http://localhost:9000/api/v1/usuarios", UsuarioDTO.class);
+        super("https://api.sprintproject.tech/api/v1/usuarios", UsuarioDTO.class);
     }
 
     public void cambiarClave(String username, String claveActual, String claveNueva) throws ErrorServiceException {

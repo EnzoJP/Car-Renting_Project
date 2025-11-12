@@ -18,11 +18,11 @@ public class AlquilerService extends BaseServiceClient<AlquilerDTO, Long> {
     private AuthService authService; //obtener token guardado
 
     public AlquilerService() {
-        super("http://localhost:9000/api/v1/alquileres", AlquilerDTO.class);
+        super("https://api.sprintproject.tech/api/v1/alquileres", AlquilerDTO.class);
     }
 
     public List<AlquilerDTO> findAlquileresPorCliente(Long clienteId) {
-        String url = "http://localhost:9000/api/v1/alquileres?cliente.id=" + clienteId;
+        String url = "https://api.sprintproject.tech/api/v1/alquileres?cliente.id=" + clienteId;
 
         // obtener el token desde AuthService
         String token = authService.getToken();

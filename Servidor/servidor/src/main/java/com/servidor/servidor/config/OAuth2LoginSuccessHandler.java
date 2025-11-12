@@ -68,7 +68,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Generar token JWT
         String token = jwtService.getToken(usuario);
         // Redirigir con el token
-        String redirectUrl = "http://localhost:8050/login-success?token=" + token;
+        String redirectUrl = "https://sprintproject.tech/login-success?token=" + token;
         getRedirectStrategy().sendRedirect(request, response, redirectUrl);
     }
 

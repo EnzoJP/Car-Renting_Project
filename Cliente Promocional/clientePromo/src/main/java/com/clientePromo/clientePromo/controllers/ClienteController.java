@@ -5,12 +5,11 @@ import com.clientePromo.clientePromo.DTO.ClienteDTO;
 import com.clientePromo.clientePromo.DTO.UsuarioDTO;
 import com.clientePromo.clientePromo.auth.AuthService;
 import com.clientePromo.clientePromo.models.WeatherResponse;
-import com.clientePromo.clientePromo.services.AlquilerService;
-import com.clientePromo.clientePromo.services.ClienteService;
-import com.clientePromo.clientePromo.services.DolarService;
-import com.clientePromo.clientePromo.services.WeatherService;
+import com.clientePromo.clientePromo.services.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -28,18 +27,17 @@ public class ClienteController {
     private final ClienteService clienteService;
     private final AlquilerService alquilerService;
     private final AuthService authService;
+    @Autowired
+    private final FacturaReportService facturaReportService;
 
     @Autowired
-    public ClienteController(WeatherService weatherService,
-                             DolarService dolarService,
-                             ClienteService clienteService,
-                             AlquilerService alquilerService,
-                             AuthService authService) {
+    public ClienteController(WeatherService weatherService, DolarService dolarService, ClienteService clienteService, AlquilerService alquilerService, AuthService authService, FacturaReportService facturaReportService) {
         this.weatherService = weatherService;
         this.dolarService = dolarService;
         this.clienteService = clienteService;
         this.alquilerService = alquilerService;
         this.authService = authService;
+        this.facturaReportService = facturaReportService;
     }
 
     @GetMapping("/dashboard")
@@ -123,6 +121,25 @@ public class ClienteController {
             model.addAttribute("weather", weather);
         } catch (Exception e) {
             model.addAttribute("weather", null);
+        }
+    }
+
+    @GetMapping("/factura/{alquilerId}")
+    public ResponseEntity<byte[]> descargarFactura(@PathVariable Long alquilerId) {
+        try {
+            byte[] pdfBytes = facturaReportService.descargarFacturaPorAlquiler(alquilerId);
+            if (pdfBytes == null || pdfBytes.length == 0) {
+                return ResponseEntity.notFound().build();
+            }
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("inline", "factura_" + alquilerId + ".pdf");
+            headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

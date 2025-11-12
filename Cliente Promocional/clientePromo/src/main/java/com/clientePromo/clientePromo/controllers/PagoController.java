@@ -4,13 +4,17 @@ import com.clientePromo.clientePromo.DTO.AlquilerDTO;
 import com.clientePromo.clientePromo.DTO.PromocionDTO;
 import com.clientePromo.clientePromo.DTO.EstadoAlquiler;
 import com.clientePromo.clientePromo.services.AlquilerService;
+import com.clientePromo.clientePromo.services.FacturaReportService;
 import com.clientePromo.clientePromo.services.PagoService;
 import com.clientePromo.clientePromo.services.PromocioService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class PagoController {
@@ -18,11 +22,13 @@ public class PagoController {
     private final PagoService testMP;
     private final PromocioService promService;
     private final AlquilerService alquilerService;
+    private final FacturaReportService facturaReportService;
 
-    public PagoController(PagoService testMP, PromocioService promService, AlquilerService alquilerService) {
+    public PagoController(PagoService testMP, PromocioService promService, AlquilerService alquilerService, FacturaReportService facturaReportService) {
         this.testMP = testMP;
         this.promService = promService;
         this.alquilerService = alquilerService;
+        this.facturaReportService = facturaReportService;
     }
 
     @GetMapping("/pago-descuento")
@@ -187,6 +193,34 @@ public class PagoController {
             return Double.parseDouble(only);
         } catch (NumberFormatException e) {
             return null;
+        }
+    }
+
+    @GetMapping("/pago-success")
+    public String pagoExitoso(@RequestParam(required = false) Long alquilerId, @RequestParam(required = false) String alquilerIds, Model model) {
+        try {
+            // Si es un solo alquiler
+            if (alquilerId != null) {
+                // Generar factura automáticamente
+                byte[] factura = facturaReportService.descargarFacturaPorAlquiler(alquilerId);
+                model.addAttribute("facturaGenerada", factura != null);
+                model.addAttribute("alquilerId", alquilerId);
+            }
+            // Si son múltiples alquileres
+            if (alquilerIds != null && !alquilerIds.isEmpty()) {
+                List<Long> ids = Arrays.stream(alquilerIds.split(","))
+                        .map(String::trim)
+                        .map(Long::parseLong)
+                        .collect(Collectors.toList());
+
+                byte[] factura = facturaReportService.descargarFacturaPorAlquileres(ids, null);
+                model.addAttribute("facturaGenerada", factura != null);
+                model.addAttribute("alquilerIds", alquilerIds);
+            }
+            return "view/pago-exitoso";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/cliente/dashboard?error=factura";
         }
     }
 

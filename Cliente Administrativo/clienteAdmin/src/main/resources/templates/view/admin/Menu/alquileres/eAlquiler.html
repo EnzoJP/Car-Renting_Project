@@ -73,10 +73,13 @@
                                             <option value="">Seleccione un vehículo disponible...</option>
                                             <option th:each="v : ${vehiculos}"
                                                     th:value="${v.id}"
-                                                    th:text="${v.patente + ' - ' + v.caracteristicaVehiculo.marca + ' ' + v.caracteristicaVehiculo.modelo}">
+                                                    th:text="${v.patente + ' - ' + v.caracteristicaVehiculo.marca + ' ' + v.caracteristicaVehiculo.modelo + ' (Stock: ' + (v.caracteristicaVehiculo.cantidadTotalVehiculo - v.caracteristicaVehiculo.cantidadVehiculoAlquilado) + ')'}">
                                             </option>
                                         </select>
-                                        <div class="form-text" th:if="${#lists.isEmpty(vehiculos)}">No hay vehículos disponibles.</div>
+                                        <div class="form-text alert alert-warning mt-2" th:if="${#lists.isEmpty(vehiculos)}">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <strong>No hay vehículos disponibles para alquilar.</strong> Todos los vehículos están actualmente alquilados o no hay stock disponible.
+                                        </div>
                                     </div>
 
                                     <!-- Nuevo campo: Estado del Alquiler -->

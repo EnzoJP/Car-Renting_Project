@@ -1,8 +1,10 @@
 package com.servidor.servidor.services;
 
+import com.servidor.servidor.entities.CaracteristicaVehiculo;
 import com.servidor.servidor.entities.Vehiculo;
 import com.servidor.servidor.enums.EstadoVehiculo;
 import com.servidor.servidor.exceptions.ErrorServiceException;
+import com.servidor.servidor.repositories.CaracteristicaVehiculoRepository;
 import com.servidor.servidor.repositories.VehiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,9 @@ public class VehiculoService extends BaseService<Vehiculo, Long> {
 
     @Autowired
     private CaracteristicaVehiculoService caracteristicaVehiculoService;
+
+    @Autowired
+    private CaracteristicaVehiculoRepository caracteristicaVehiculoRepository;
 
     private final VehiculoRepository vehiculoRepository;
 
@@ -91,17 +96,43 @@ public class VehiculoService extends BaseService<Vehiculo, Long> {
         return eliminado;
     }
 
-
     @Transactional
     public Vehiculo cambiarEstado(Long id, String nuevoEstado) throws ErrorServiceException {
-        Vehiculo vehiculo = vehiculoRepository.findById(id)
-                .orElseThrow(() -> new ErrorServiceException("Vehículo no encontrado con ID: " + id));
-        try {
-            EstadoVehiculo estadoEnum = EstadoVehiculo.valueOf(nuevoEstado.toUpperCase());
-            vehiculo.setEstadoVehiculo(estadoEnum);
-            return vehiculoRepository.save(vehiculo);
-        } catch (IllegalArgumentException e) {
-            throw new ErrorServiceException("El estado '" + nuevoEstado + "' no es válido.");
+        Optional<Vehiculo> optVehiculo = vehiculoRepository.findById(id);
+        if (optVehiculo.isEmpty()) {
+            throw new ErrorServiceException("No se encontró el vehículo con ID " + id);
         }
+
+        Vehiculo vehiculo = optVehiculo.get();
+        CaracteristicaVehiculo caracteristica = vehiculo.getCaracteristicaVehiculo();
+
+        if (caracteristica == null) {
+            throw new ErrorServiceException("El vehículo no tiene características asociadas");
+        }
+
+        EstadoVehiculo estadoAnterior = vehiculo.getEstadoVehiculo();
+
+        // Actualizar el estado
+        vehiculo.setEstadoVehiculo(EstadoVehiculo.valueOf(nuevoEstado.toUpperCase()));
+
+        // Actualizar los contadores de stock
+        if (!nuevoEstado.equalsIgnoreCase(estadoAnterior.name())) {
+            if (nuevoEstado.equalsIgnoreCase("ALQUILADO")) {
+                caracteristica.setCantidadVehiculoAlquilado(
+                        caracteristica.getCantidadVehiculoAlquilado() + 1
+                );
+            } else if (estadoAnterior == EstadoVehiculo.ALQUILADO
+                    && nuevoEstado.equalsIgnoreCase("DISPONIBLE")
+                    && caracteristica.getCantidadVehiculoAlquilado() > 0) {
+                caracteristica.setCantidadVehiculoAlquilado(
+                        caracteristica.getCantidadVehiculoAlquilado() - 1
+                );
+            }
+        }
+
+        caracteristicaVehiculoRepository.save(caracteristica);
+        vehiculoRepository.save(vehiculo);
+
+        return vehiculo;
     }
 }

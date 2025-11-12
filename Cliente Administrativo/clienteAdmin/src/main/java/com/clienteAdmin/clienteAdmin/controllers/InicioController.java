@@ -61,7 +61,7 @@ public class InicioController {
             HttpServletRequest request,
             Model model) {
 
-        boolean success = authService.login(username, password);
+        boolean success = authService.login(username, password); // Mantenlo como boolean
 
         if (success) {
             HttpSession session = request.getSession(true);
@@ -70,18 +70,7 @@ public class InicioController {
                     HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
                     context
             );
-
-            // Obtener información del empleado
-            EmpleadoDTO empleado = empleadoService.obtenerPorUsername(username);
-            if (empleado != null) {
-                session.setAttribute("empleadoActual", empleado);
-                session.setAttribute("tipoEmpleado", empleado.getTipoEmpleado());
-                session.setAttribute("esJefe", "JEFE".equals(empleado.getTipoEmpleado()));
-            }
-
             System.out.println("Login exitoso para: " + username);
-            System.out.println("Tipo Empleado: " + (empleado != null ? empleado.getTipoEmpleado() : "N/A"));
-
             return "redirect:/admin/dashboard";
         } else {
             System.out.println("Login fallido para: " + username);

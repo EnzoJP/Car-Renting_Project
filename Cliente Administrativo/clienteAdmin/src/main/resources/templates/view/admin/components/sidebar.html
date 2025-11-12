@@ -26,12 +26,12 @@
                             </nav>
                         </div>
                     </th:block>
-
+                    <th:block th:if="${esAdministrativo}">
                         <a class="nav-link" th:href="@{/admin/usuarios/clave}">
                             <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
                             Cambiar Clave
                         </a>
-
+                    </th:block>
 
                     <th:block th:if="${esJefe}">
                         <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDireccion" aria-expanded="false" aria-controls="collapseDireccion">

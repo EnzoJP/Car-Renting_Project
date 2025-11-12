@@ -7,6 +7,7 @@ import com.servidor.servidor.exceptions.ErrorServiceException;
 import com.servidor.servidor.repositories.AlquilerRepository;
 import com.servidor.servidor.repositories.UsuarioClienteRepository;
 import com.servidor.servidor.repositories.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +15,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AlquilerService extends BaseService<Alquiler, Long> {
+
+    @Autowired
+    private VehiculoService vehiculoService;
+
+    @Autowired
+    private CaracteristicaVehiculoService caracteristicaVehiculoService;
 
     private final AlquilerRepository alquilerRepository;
     private final EmailService emailService;
@@ -49,6 +57,60 @@ public class AlquilerService extends BaseService<Alquiler, Long> {
         } catch (Exception e) {
             throw new ErrorServiceException("Error de Sistemas");
         }
+    }
+
+    @Override
+    @Transactional
+    public Alquiler alta(Alquiler alquiler) throws ErrorServiceException {
+        Alquiler guardado = super.alta(alquiler);
+
+        //recalcular las cantidades de la característica asociada al auto alquilado
+        if (guardado.getVehiculo() != null
+                && guardado.getVehiculo().getCaracteristicaVehiculo() != null) {
+            caracteristicaVehiculoService.recalcularCantidades(
+                    guardado.getVehiculo().getCaracteristicaVehiculo().getId()
+            );
+        }
+        return guardado;
+    }
+
+    @Override
+    @Transactional
+    public Optional<Alquiler> modificar(Long id, Alquiler alquiler) throws ErrorServiceException {
+        Optional<Alquiler> modificado = super.modificar(id, alquiler);
+
+        //recalcular las cantidades de la caracterisitca asociada
+        if (modificado.isPresent()
+                && modificado.get().getVehiculo() != null
+                && modificado.get().getVehiculo().getCaracteristicaVehiculo() != null) {
+            caracteristicaVehiculoService.recalcularCantidades(
+                    modificado.get().getVehiculo().getCaracteristicaVehiculo().getId()
+            );
+        }
+
+        return modificado;
+    }
+
+    @Override
+    @Transactional
+    public boolean bajaLogica(Long id) throws ErrorServiceException {
+        //obtener el alquiler antes de eliminarlo
+        Alquiler alquiler = repository.findById(id)
+                .orElseThrow(() -> new ErrorServiceException("Alquiler no encontrado"));
+
+        Long caracteristicaId = null;
+        if (alquiler.getVehiculo() != null
+                && alquiler.getVehiculo().getCaracteristicaVehiculo() != null) {
+            caracteristicaId = alquiler.getVehiculo().getCaracteristicaVehiculo().getId();
+        }
+
+        boolean eliminado = super.bajaLogica(id);
+
+        //recalcular las cantidades
+        if (eliminado && caracteristicaId != null) {
+            caracteristicaVehiculoService.recalcularCantidades(caracteristicaId);
+        }
+        return eliminado;
     }
 
     // para el dashboard cliente

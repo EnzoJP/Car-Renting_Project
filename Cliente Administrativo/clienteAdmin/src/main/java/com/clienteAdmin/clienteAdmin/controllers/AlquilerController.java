@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.time.LocalDate; // Importar
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -54,11 +55,24 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
     @Override
     protected void preAlta() throws ErrorServiceException {
         this.model.addAttribute("clientes", clienteService.listarActivos());
-        this.model.addAttribute("vehiculos",
-                vehiculoService.listarActivos().stream()
-                        .filter(v -> "DISPONIBLE".equals(v.getEstadoVehiculo()))
-                        .collect(Collectors.toList())
-        );
+
+        //obtener solo autos DISPONIBLES que dado una marca y un modelo,tenga stcok
+        List<VehiculoDTO> vehiculosDisponibles = vehiculoService.listarActivos().stream()
+                .filter(v -> "DISPONIBLE".equals(v.getEstadoVehiculo()))
+                .filter(v -> {
+                    if (v.getCaracteristicaVehiculo() != null) {
+                        int total = v.getCaracteristicaVehiculo().getCantidadTotalVehiculo();
+                        int alquilados = v.getCaracteristicaVehiculo().getCantidadVehiculoAlquilado();
+                        int disponibles = total - alquilados;
+
+                        //solo mostrar si hay al menos 1 disponible
+                        return disponibles > 0;
+                    }
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        this.model.addAttribute("vehiculos", vehiculosDisponibles);
     }
 
     @Override
@@ -145,8 +159,11 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
 
             System.out.println("Alquiler guardado exitosamente con ID: " + alquilerGuardado.getId());
 
-            // === CAMBIAR ESTADO DEL VEHÍCULO (solo para altas) ===
-            if (entidad.getId() == null && entidad.getVehiculo() != null && entidad.getVehiculo().getId() != null) {
+            // === CAMBIAR ESTADO DEL VEHÍCULO (solo para altas y si está pagado) ===
+            if (entidad.getId() == null
+                    && "PAGADO".equals(entidad.getEstadoAlquiler())  // ← AGREGADO
+                    && entidad.getVehiculo() != null
+                    && entidad.getVehiculo().getId() != null) {
                 try {
                     System.out.println("Cambiando estado del vehículo " + entidad.getVehiculo().getId() + " a ALQUILADO");
                     vehiculoService.cambiarEstado(entidad.getVehiculo().getId(), "ALQUILADO");
@@ -154,7 +171,7 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
                 } catch (Exception e) {
                     System.err.println("Advertencia: No se pudo cambiar el estado del vehículo: " + e.getMessage());
                     e.printStackTrace();
-                    // No lanzar excepción, el alquiler ya se guardó
+                    // alquiler guardado sin excepcion
                 }
             }
 

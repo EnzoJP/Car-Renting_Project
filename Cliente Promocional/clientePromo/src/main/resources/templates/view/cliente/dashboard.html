@@ -361,6 +361,7 @@
                             <td class="text-center">
                         <span th:if="${alquiler.estadoAlquiler != null and alquiler.estadoAlquiler.name() == 'PAGADO'}">
                             <a th:href="@{/cliente/factura/{id}(id=${alquiler.id})}"
+                               target="_blank"
                                class="btn btn-download"
                                title="Ver Factura">
                                 <i class="fa fa-file-text"></i> Ver Factura

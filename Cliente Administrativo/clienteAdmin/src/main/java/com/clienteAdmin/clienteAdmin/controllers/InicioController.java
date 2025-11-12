@@ -1,9 +1,11 @@
 package com.clienteAdmin.clienteAdmin.controllers;
 
 import com.clienteAdmin.clienteAdmin.DTO.AlquilerDTO;
+import com.clienteAdmin.clienteAdmin.DTO.EmpleadoDTO;
 import com.clienteAdmin.clienteAdmin.DTO.VehiculoDTO;
 import com.clienteAdmin.clienteAdmin.auth.AuthService;
 import com.clienteAdmin.clienteAdmin.services.AlquilerService;
+import com.clienteAdmin.clienteAdmin.services.EmpleadoService;
 import com.clienteAdmin.clienteAdmin.services.VehiculoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -34,12 +36,16 @@ public class InicioController {
     @Autowired
     private final AlquilerService alquilerService;
 
+    @Autowired
+    private final EmpleadoService empleadoService;
 
     @Autowired
-    public InicioController(AuthService authService, VehiculoService vehiculoService, AlquilerService alquilerService) {
+    public InicioController(AuthService authService, VehiculoService vehiculoService,
+                            AlquilerService alquilerService, EmpleadoService empleadoService) {
         this.authService = authService;
         this.vehiculoService = vehiculoService;
         this.alquilerService = alquilerService;
+        this.empleadoService = empleadoService;
     }
 
     @GetMapping({"/", "/login"})
@@ -58,7 +64,6 @@ public class InicioController {
         boolean success = authService.login(username, password);
 
         if (success) {
-            // CRÍTICO: Persistir el SecurityContext en la sesión
             HttpSession session = request.getSession(true);
             SecurityContext context = SecurityContextHolder.getContext();
             session.setAttribute(
@@ -66,13 +71,20 @@ public class InicioController {
                     context
             );
 
+            // Obtener información del empleado
+            EmpleadoDTO empleado = empleadoService.obtenerPorUsername(username);
+            if (empleado != null) {
+                session.setAttribute("empleadoActual", empleado);
+                session.setAttribute("tipoEmpleado", empleado.getTipoEmpleado());
+                session.setAttribute("esJefe", "JEFE".equals(empleado.getTipoEmpleado()));
+            }
+
             System.out.println("Login exitoso para: " + username);
-            System.out.println(" Autenticación: " + context.getAuthentication());
-            System.out.println("Authorities: " + context.getAuthentication().getAuthorities());
+            System.out.println("Tipo Empleado: " + (empleado != null ? empleado.getTipoEmpleado() : "N/A"));
 
             return "redirect:/admin/dashboard";
         } else {
-            System.out.println(" Login fallido para: " + username);
+            System.out.println("Login fallido para: " + username);
             model.addAttribute("error", "Credenciales inválidas");
             return "login";
         }
@@ -88,12 +100,10 @@ public class InicioController {
         return "redirect:/login?logout";
     }
 
-    // Home protegido (seria el dashboard)
     @GetMapping({"/admin","/admin/dashboard"})
     public String home(Model model) {
 
         try {
-            // grafico de flota de vehicilos
             List<VehiculoDTO> vehiculos = vehiculoService.listarActivos();
             Map<String, Long> estadoFlota = vehiculos.stream()
                     .collect(Collectors.groupingBy(VehiculoDTO::getEstadoVehiculo, Collectors.counting()));
@@ -102,18 +112,15 @@ public class InicioController {
             model.addAttribute("alquilados", estadoFlota.getOrDefault("ALQUILADO", 0L));
             model.addAttribute("mantenimiento", estadoFlota.getOrDefault("MANTENIMIENTO", 0L));
 
-            // logica tabla de alquileres recientes
             List<AlquilerDTO> actividadReciente = alquilerService.listarActivos().stream()
-                    .sorted((a1, a2) -> a2.getFechaDesde().compareTo(a1.getFechaDesde())) // Ordena por fecha (más nuevo primero)
-                    .limit(5) // solo 5
+                    .sorted((a1, a2) -> a2.getFechaDesde().compareTo(a1.getFechaDesde()))
+                    .limit(5)
                     .collect(Collectors.toList());
 
             model.addAttribute("actividadReciente", actividadReciente);
 
         } catch (Exception e) {
-            // Si la API está caída, evitamos que la app crashee al loguear
             model.addAttribute("errorDashboard", "No se pudieron cargar los datos del dashboard: " + e.getMessage());
-            // enviamos valores por defecto para que el gráfico no falle
             model.addAttribute("disponibles", 0L);
             model.addAttribute("alquilados", 0L);
             model.addAttribute("mantenimiento", 0L);

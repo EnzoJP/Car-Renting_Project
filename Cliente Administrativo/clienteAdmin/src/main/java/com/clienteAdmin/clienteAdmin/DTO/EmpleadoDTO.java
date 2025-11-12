@@ -21,4 +21,16 @@ public class EmpleadoDTO implements Identifiable<Long> {
     private DireccionDTO direccion;
     private ImagenDTO imagen;
     private String tipoEmpleado;
+
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
+    }
+
+    public boolean esJefe() {
+        return "JEFE".equals(tipoEmpleado);
+    }
+
+    public boolean esAdministrativo() {
+        return "ADMINISTRATIVO".equals(tipoEmpleado);
+    }
 }

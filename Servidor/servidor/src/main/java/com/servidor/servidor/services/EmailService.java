@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Service
 public class EmailService {
@@ -117,4 +118,75 @@ public class EmailService {
             System.err.println("Error al enviar email: " + e.getMessage());
         }
     }
+
+    public void enviarEmailMasivoBCC(List<String> destinatarios, String asunto, String contenidoHtml) {
+        if (destinatarios == null || destinatarios.isEmpty()) {
+            System.out.println("No hay destinatarios para enviar el email masivo.");
+            return;
+        }
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setFrom(fromEmail);
+            // Convertir la Lista a un Array para el BCC
+            String[] bccArray = destinatarios.toArray(new String[0]);
+            helper.setBcc(bccArray);
+            helper.setSubject(asunto);
+            helper.setText(contenidoHtml, true);
+            mailSender.send(message);
+            System.out.println("Email de promoción enviado (BCC) a " + destinatarios.size() + " destinatarios.");
+        } catch (MessagingException e) {
+            System.err.println("Error al enviar email masivo: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public String crearHtmlPromocion(String descripcion, String codigo, double porcentaje, String fechaFin) {
+        // Reutilizamos el estilo de tu otro email para mantener la consistencia
+        return """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+                    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+                    .header { background: linear-gradient(135deg, #fe5b29 0%%, #363636 100%%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+                    .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+                    .highlight { background: #ffe5dc; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #fe5b29; text-align: center; }
+                    .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+                    .button { display: inline-block; background: #fe5b29; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🚗 Sprint Solutions 😎</h1>
+                        <p>¡Tenemos una nueva promoción para vos!</p>
+                    </div>
+                    <div class="content">
+                        <h2>¡Hola! No te pierdas esta 🤯🔥oferta especial😼💯:</h2>
+                        <p>%s</p>
+                        
+                        <div class="highlight">
+                            <p style="font-size: 20px; margin:0;">Usa el código:</p>
+                            <h2 style="font-size: 32px; margin: 5px 0; color: #fe5b29;">%s</h2>
+                            <p style="font-size: 18px; margin:0;">y obtén un <strong>%.0f%% de descuento</strong></p>
+                        </div>
+                        
+                        <p>Esta promoción es válida hasta el %s.</p>
+                        
+                        <center>
+                            <a href="https://www.sprintproject.tech" class="button">¡Reserva ahora!🔥🔥🔥</a>
+                        </center>
+                    </div>
+                    <div class="footer">
+                        <p>Sprint Solutions - Alquiler de vehículos<br>
+                        Mendoza, Argentina</p>
+                    </div>
+                </div>
+            </body>
+            </html>
+            """.formatted(descripcion, codigo, porcentaje, fechaFin);
+    }
+
 }

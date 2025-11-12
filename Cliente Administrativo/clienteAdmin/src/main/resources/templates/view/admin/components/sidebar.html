@@ -12,32 +12,44 @@
 
                     <div class="sb-sidenav-menu-heading">Gestión</div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsuario" aria-expanded="false" aria-controls="#collapseUsuario">
-                        <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
-                        Usuario
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseUsuario" data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" th:href="@{/admin/usuarios/menu}">Menú Principal</a>
-                            <a class="nav-link" th:href="@{/admin/usuarios/clave}">Cambiar clave</a>
-                        </nav>
-                    </div>
+                    <!-- Gestión de Usuarios - SOLO JEFE -->
+                    <th:block th:if="${esJefe}">
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsuario" aria-expanded="false" aria-controls="collapseUsuario">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Usuario
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseUsuario" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" th:href="@{/admin/usuarios/menu}">Menú Principal</a>
+                                <a class="nav-link" th:href="@{/admin/usuarios/clave}">Cambiar clave</a>
+                            </nav>
+                        </div>
+                    </th:block>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDireccion" aria-expanded="false" aria-controls="#collapseDireccion">
-                        <div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        Dirección
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapseDireccion" data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" th:href="@{/admin/direccion/menu}">
-                                <i class="fas fa-th me-1"></i> Menú Principal
-                            </a>
-                        </nav>
-                    </div>
+                        <a class="nav-link" th:href="@{/admin/usuarios/clave}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-key"></i></div>
+                            Cambiar Clave
+                        </a>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVehiculo" aria-expanded="false" aria-controls="#collapseVehiculo">
+
+                    <th:block th:if="${esJefe}">
+                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseDireccion" aria-expanded="false" aria-controls="collapseDireccion">
+                            <div class="sb-nav-link-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            Dirección
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse" id="collapseDireccion" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link" th:href="@{/admin/direccion/menu}">
+                                    <i class="fas fa-th me-1"></i> Menú Principal
+                                </a>
+                            </nav>
+                        </div>
+                    </th:block>
+
+                    <!-- Vehículos - TODOS -->
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseVehiculo" aria-expanded="false" aria-controls="collapseVehiculo">
                         <div class="sb-nav-link-icon"><i class="fas fa-car"></i></div>
                         Vehículo
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -50,7 +62,8 @@
                         </nav>
                     </div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAlquiler" aria-expanded="false" aria-controls="#collapseAlquiler">
+                    <!-- Alquileres - TODOS -->
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseAlquiler" aria-expanded="false" aria-controls="collapseAlquiler">
                         <div class="sb-nav-link-icon"><i class="fas fa-file-invoice-dollar"></i></div>
                         Alquileres
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -63,7 +76,8 @@
                         </nav>
                     </div>
 
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePromociones" aria-expanded="false" aria-controls="#collapsePromociones">
+                    <!-- Promociones - TODOS -->
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePromociones" aria-expanded="false" aria-controls="collapsePromociones">
                         <div class="sb-nav-link-icon"><i class="fas fa-tags"></i></div>
                         Promociones
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -75,24 +89,31 @@
                             </a>
                         </nav>
                     </div>
-                    <div class="sb-sidenav-menu-heading">Reportes</div>
 
-                    <a class="nav-link" th:href="@{/generar-pdf}" target="_blank">
-                        <div class="sb-nav-link-icon"><i class="fas fa-file-pdf"></i></div>
-                        PDF Clientes
-                    </a>
+                    <!-- REPORTES - SOLO JEFE -->
+                    <th:block th:if="${esJefe}">
+                        <div class="sb-sidenav-menu-heading">Reportes</div>
 
-                    <a class="nav-link" th:href="@{/generar-excel.xlsx}" target="_blank" id="excelLink">
-                        <div class="sb-nav-link-icon"><i class="fas fa-file-excel"></i></div>
-                        Excel Alquileres
-                    </a>
+                        <a class="nav-link" th:href="@{/generar-pdf}" target="_blank">
+                            <div class="sb-nav-link-icon"><i class="fas fa-file-pdf"></i></div>
+                            PDF Clientes
+                        </a>
+
+                        <a class="nav-link" th:href="@{/generar-excel.xlsx}" target="_blank">
+                            <div class="sb-nav-link-icon"><i class="fas fa-file-excel"></i></div>
+                            Excel Alquileres
+                        </a>
+                    </th:block>
 
                 </div>
             </div>
 
             <div class="sb-sidenav-footer">
                 <div class="small">Logged in as:</div>
-                Admin
+                <span th:text="${empleadoActual != null ? empleadoActual.nombre + ' ' + empleadoActual.apellido : 'Usuario'}">Usuario</span>
+                <br>
+                <span class="badge" th:classappend="${esJefe} ? 'bg-danger' : 'bg-primary'"
+                      th:text="${esJefe} ? 'JEFE' : 'ADMINISTRATIVO'">ROL</span>
             </div>
         </nav>
     </div>

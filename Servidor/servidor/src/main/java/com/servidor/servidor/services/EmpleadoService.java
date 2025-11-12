@@ -8,8 +8,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmpleadoService extends BaseService<Empleado, Long> {
 
+    private final EmpleadoRepository empleadoRepository;
+
     public EmpleadoService(EmpleadoRepository repository) {
         super(repository);
+        this.empleadoRepository = repository;
     }
 
     @Override
@@ -33,4 +36,10 @@ public class EmpleadoService extends BaseService<Empleado, Long> {
             throw new ErrorServiceException("Error de Sistemas");
         }
     }
+
+    public Empleado buscarPorUsername(String username) {
+        return empleadoRepository.findByEmail(username);
+    }
+
+
 }

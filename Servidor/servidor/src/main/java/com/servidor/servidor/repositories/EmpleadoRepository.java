@@ -8,12 +8,11 @@ import java.util.Optional;
 
 public interface EmpleadoRepository extends BaseRepository<Empleado, Long> {
 
+    //busco mail que es username
     @Query(value = """
         SELECT e.*, p.* FROM empleado e 
         INNER JOIN persona p ON e.id = p.id
-        INNER JOIN contacto c ON c.persona_id = p.id
-        INNER JOIN contacto_correo_electronico cce ON cce.id = c.id
-        WHERE LOWER(cce.email) = LOWER(:email) 
+        WHERE LOWER(p.username) = LOWER(:email) 
         AND p.eliminado = false
         """, nativeQuery = true)
     Optional<Empleado> findByEmail(@Param("email") String email);

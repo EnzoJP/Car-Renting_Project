@@ -58,7 +58,7 @@ public class PromocionService extends BaseService<Promocion, Long> {
     }
 
     @Transactional(readOnly = true)
-    @Scheduled(cron = "0 0 8 * * ?") // Todos los días a las 8 AM
+    @Scheduled(cron = "0 45 19 * * ?") // Todos los días a las 8 AM
     public void enviarCorreosPromocionesNuevas() {
         LocalDate hoy = LocalDate.now();
         List<Promocion> promocionesDeHoy = promocionRepository.findPromocionesQueInicianHoy(hoy);

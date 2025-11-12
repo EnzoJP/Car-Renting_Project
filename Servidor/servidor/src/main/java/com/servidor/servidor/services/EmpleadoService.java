@@ -5,6 +5,8 @@ import com.servidor.servidor.exceptions.ErrorServiceException;
 import com.servidor.servidor.repositories.EmpleadoRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class EmpleadoService extends BaseService<Empleado, Long> {
 
@@ -37,9 +39,8 @@ public class EmpleadoService extends BaseService<Empleado, Long> {
         }
     }
 
-    public Empleado buscarPorUsername(String username) {
-        return empleadoRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con email: " + username));
+    public Optional<Empleado> buscarPorUsername(String username) {
+        return empleadoRepository.findByEmail(username);
     }
 
 

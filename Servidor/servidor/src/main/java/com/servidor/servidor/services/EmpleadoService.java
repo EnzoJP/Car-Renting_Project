@@ -38,7 +38,8 @@ public class EmpleadoService extends BaseService<Empleado, Long> {
     }
 
     public Empleado buscarPorUsername(String username) {
-        return empleadoRepository.findByEmail(username);
+        return empleadoRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con email: " + username));
     }
 
 

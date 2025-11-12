@@ -18,13 +18,14 @@ public class DocumentacionService extends BaseService<Documentacion, Long> {
             if (documentacion.getTipoDocumentacion() == null) {
                 throw new ErrorServiceException("Debe indicar el tipo de documentación");
             }
-            if (documentacion.getPathArchivo() == null || documentacion.getPathArchivo().trim().isEmpty()) {
-                throw new ErrorServiceException("Debe indicar el path del archivo");
+            if (documentacion.getNombreArchivo() == null || documentacion.getNombreArchivo().trim().isEmpty()) {
+                throw new ErrorServiceException("Debe indicar el nombre del archivo");
             }
         } catch (ErrorServiceException e) {
             throw e;
         } catch (Exception e) {
-            throw new ErrorServiceException("Error de Sistemas");
+            e.printStackTrace();
+            throw new ErrorServiceException("Error de Sistemas: " + e.getMessage());
         }
     }
 }

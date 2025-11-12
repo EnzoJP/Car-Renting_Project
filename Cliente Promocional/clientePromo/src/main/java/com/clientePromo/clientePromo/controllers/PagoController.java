@@ -199,6 +199,9 @@ public class PagoController {
     @GetMapping("/pago-success")
     public String pagoExitoso(@RequestParam(required = false) Long alquilerId, @RequestParam(required = false) String alquilerIds, Model model) {
         try {
+            System.out.println("=== PAGO EXITOSO ===");
+            System.out.println("alquilerId: " + alquilerId);
+            System.out.println("alquilerIds: " + alquilerIds);
             // Si es un solo alquiler
             if (alquilerId != null) {
                 // Generar factura automáticamente

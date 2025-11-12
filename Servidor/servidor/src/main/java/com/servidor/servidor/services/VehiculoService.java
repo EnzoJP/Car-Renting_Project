@@ -1,6 +1,7 @@
 package com.servidor.servidor.services;
 
 import com.servidor.servidor.entities.Vehiculo;
+import com.servidor.servidor.enums.EstadoVehiculo;
 import com.servidor.servidor.exceptions.ErrorServiceException;
 import com.servidor.servidor.repositories.VehiculoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ public class VehiculoService extends BaseService<Vehiculo, Long> {
     @Autowired
     private CaracteristicaVehiculoService caracteristicaVehiculoService;
 
+    private final VehiculoRepository vehiculoRepository;
+
     public VehiculoService(VehiculoRepository repository) {
         super(repository);
+        this.vehiculoRepository = repository;
     }
 
     @Override
@@ -85,5 +89,19 @@ public class VehiculoService extends BaseService<Vehiculo, Long> {
         }
 
         return eliminado;
+    }
+
+
+    @Transactional
+    public Vehiculo cambiarEstado(Long id, String nuevoEstado) throws ErrorServiceException {
+        Vehiculo vehiculo = vehiculoRepository.findById(id)
+                .orElseThrow(() -> new ErrorServiceException("Vehículo no encontrado con ID: " + id));
+        try {
+            EstadoVehiculo estadoEnum = EstadoVehiculo.valueOf(nuevoEstado.toUpperCase());
+            vehiculo.setEstadoVehiculo(estadoEnum);
+            return vehiculoRepository.save(vehiculo);
+        } catch (IllegalArgumentException e) {
+            throw new ErrorServiceException("El estado '" + nuevoEstado + "' no es válido.");
+        }
     }
 }

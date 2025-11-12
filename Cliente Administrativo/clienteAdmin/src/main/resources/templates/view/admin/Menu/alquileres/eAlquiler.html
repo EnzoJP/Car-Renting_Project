@@ -99,10 +99,13 @@
                                         <div class="form-text">Subir un solo archivo PDF o Word que contenga el DNI y el Carnet de Conducir. (Requerido para alquileres nuevos)</div>
 
                                         <div th:if="${item.id != null && item.documentacion != null}" class="mt-2">
-                                            <a th:href="@{'/documentos/' + ${item.documentacion.id}}" target="_blank" class="btn btn-info btn-sm">
+
+                                            <a th:href="@{'http://localhost:9000/api/v1/alquileres/documentacion/' + ${item.id}}"
+                                               target="_blank" class="btn btn-info btn-sm">
                                                 <i class="fas fa-file-alt me-1"></i>
                                                 Ver Documento Actual (<span th:text="${item.documentacion.nombreArchivo}"></span>)
                                             </a>
+
                                         </div>
                                     </div>
 

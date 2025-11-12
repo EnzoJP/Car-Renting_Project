@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate; // Importar
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
@@ -28,17 +29,20 @@ import java.util.stream.Collectors;
 @RequestMapping("/admin/alquiler")
 public class AlquilerController extends BaseController<AlquilerDTO, Long> {
 
-    @Autowired
-    private ClienteService clienteService;
+    private final ClienteService clienteService;
+    private final VehiculoService vehiculoService;
+    private final CostoVehiculoService costoVehiculoService;
+    private final AlquilerService alquilerService;
 
     @Autowired
-    private VehiculoService vehiculoService;
-
-    @Autowired
-    private CostoVehiculoService costoVehiculoService;
-
-    public AlquilerController(AlquilerService service) {
+    public AlquilerController(AlquilerService service, ClienteService clienteService,
+                              VehiculoService vehiculoService, CostoVehiculoService costoVehiculoService) {
         super(service);
+        this.alquilerService = service;
+        this.clienteService = clienteService;
+        this.vehiculoService = vehiculoService;
+        this.costoVehiculoService = costoVehiculoService;
+
         AlquilerDTO defaultDto = new AlquilerDTO();
         defaultDto.setEstadoAlquiler("ADEUDADO");
         initController(defaultDto,
@@ -50,7 +54,6 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
     @Override
     protected void preAlta() throws ErrorServiceException {
         this.model.addAttribute("clientes", clienteService.listarActivos());
-
         this.model.addAttribute("vehiculos",
                 vehiculoService.listarActivos().stream()
                         .filter(v -> "DISPONIBLE".equals(v.getEstadoVehiculo()))
@@ -63,77 +66,96 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
         preAlta();
     }
 
-    // Helper para normalizar strings (marca/modelo)
     private String normalize(String s) {
         return s == null ? "" : s.trim().toLowerCase();
     }
 
-    // un solo archivo contiene toda la documentación necesaria
     @Override
     @PostMapping("/actualizar")
     public String actualizar(@ModelAttribute("item") AlquilerDTO entidad,
-                             @RequestParam("file") MultipartFile file,
+                             @RequestParam(value = "file", required = false) MultipartFile file,
                              RedirectAttributes attributes,
                              Model model) {
         try {
             this.model = model;
             preActualziacion();
 
-            if (file != null && !file.isEmpty()) {
-                DocumentacionDTO doc = new DocumentacionDTO();
-                doc.setNombreArchivo(file.getOriginalFilename());
-                // Aquí puedes setear el tipo si lo necesitas, ej:
-                // doc.setTipoDocumentacion("ALQUILER_DOCS");
-                entidad.setDocumentacion(doc);
-            }
-
+            // === CÁLCULO DE COSTO (solo para altas) ===
             if (entidad.getId() == null) {
-                // Cargar el vehículo completo si solo tiene id
                 if (entidad.getVehiculo() != null && entidad.getVehiculo().getId() != null) {
                     VehiculoDTO veh = vehiculoService.obtener(entidad.getVehiculo().getId());
                     entidad.setVehiculo(veh);
                 }
 
-                // Calcular costo
                 if (entidad.getVehiculo() != null && entidad.getVehiculo().getCaracteristicaVehiculo() != null
                         && entidad.getFechaDesde() != null && entidad.getFechaHasta() != null) {
-                    long dias = ChronoUnit.DAYS.between(
-                        entidad.getFechaDesde().toInstant().atZone(ZoneId.systemDefault()).toLocalDate(),
-                        entidad.getFechaHasta().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    );
 
-                    // preparar datos para comparación
+                    LocalDate desde = entidad.getFechaDesde().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    LocalDate hasta = entidad.getFechaHasta().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                    long dias = ChronoUnit.DAYS.between(desde, hasta);
+                    if (dias < 1) dias = 1;
+
                     Long caracteristicaId = entidad.getVehiculo().getCaracteristicaVehiculo().getId();
                     String marcaNorm = normalize(entidad.getVehiculo().getCaracteristicaVehiculo().getMarca());
                     String modeloNorm = normalize(entidad.getVehiculo().getCaracteristicaVehiculo().getModelo());
 
                     double costoDiario = costoVehiculoService.listarActivos().stream()
-                        .filter(cv -> {
-                            if (cv.getCaracteristicaVehiculo() == null) return false;
-                            // si existe id en ambas, compararlo
-                            if (caracteristicaId != null && cv.getCaracteristicaVehiculo().getId() != null) {
-                                return Objects.equals(cv.getCaracteristicaVehiculo().getId(), caracteristicaId);
-                            }
-                            // fallback: comparar marca+modelo normalizados
-                            String cvMarca = normalize(cv.getCaracteristicaVehiculo().getMarca());
-                            String cvModelo = normalize(cv.getCaracteristicaVehiculo().getModelo());
-                            return cvMarca.equals(marcaNorm) && cvModelo.equals(modeloNorm);
-                        })
-                        .findFirst()
-                        .map(CostoVehiculoDTO::getCosto)
-                        .orElse(0.0);
+                            .filter(cv -> {
+                                if (cv.getCaracteristicaVehiculo() == null) return false;
+                                if (caracteristicaId != null && cv.getCaracteristicaVehiculo().getId() != null) {
+                                    return Objects.equals(cv.getCaracteristicaVehiculo().getId(), caracteristicaId);
+                                }
+                                String cvMarca = normalize(cv.getCaracteristicaVehiculo().getMarca());
+                                String cvModelo = normalize(cv.getCaracteristicaVehiculo().getModelo());
+                                return cvMarca.equals(marcaNorm) && cvModelo.equals(modeloNorm);
+                            })
+                            .findFirst()
+                            .map(CostoVehiculoDTO::getCosto)
+                            .orElse(0.0);
+
                     entidad.setCosto(dias * costoDiario);
                 } else {
-                    entidad.setCosto(0.0); // O manejar el error mostrando mensaje
+                    entidad.setCosto(0.0);
                 }
+            }
 
-                service.alta(entidad);
-                if (entidad.getVehiculo() != null && entidad.getVehiculo().getId() != null) {
+            // === PROCESAMIENTO DEL ARCHIVO ===
+            byte[] fileBytes = null;
+            String originalFileName = null;
+
+            if (file != null && !file.isEmpty()) {
+                fileBytes = file.getBytes();
+                originalFileName = file.getOriginalFilename();
+
+                DocumentacionDTO doc = new DocumentacionDTO();
+                doc.setTipoDocumentacion("CARNET_DE_CONDUCIR");
+                entidad.setDocumentacion(doc);
+
+            } else if (entidad.getId() == null) {
+                throw new ErrorServiceException("Debe adjuntar un archivo de documentación para un nuevo alquiler.");
+            }
+
+            // === GUARDAR ALQUILER ===
+            System.out.println("=== Guardando alquiler ===");
+            System.out.println("ID: " + entidad.getId());
+            System.out.println("Cliente ID: " + (entidad.getCliente() != null ? entidad.getCliente().getId() : "null"));
+            System.out.println("Vehículo ID: " + (entidad.getVehiculo() != null ? entidad.getVehiculo().getId() : "null"));
+
+            AlquilerDTO alquilerGuardado = alquilerService.saveWithFile(entidad, fileBytes, originalFileName);
+
+            System.out.println("Alquiler guardado exitosamente con ID: " + alquilerGuardado.getId());
+
+            // === CAMBIAR ESTADO DEL VEHÍCULO (solo para altas) ===
+            if (entidad.getId() == null && entidad.getVehiculo() != null && entidad.getVehiculo().getId() != null) {
+                try {
+                    System.out.println("Cambiando estado del vehículo " + entidad.getVehiculo().getId() + " a ALQUILADO");
                     vehiculoService.cambiarEstado(entidad.getVehiculo().getId(), "ALQUILADO");
+                    System.out.println("Estado del vehículo cambiado exitosamente");
+                } catch (Exception e) {
+                    System.err.println("Advertencia: No se pudo cambiar el estado del vehículo: " + e.getMessage());
+                    e.printStackTrace();
+                    // No lanzar excepción, el alquiler ya se guardó
                 }
-
-            } else {
-                service.modificar(entidad.getId(), entidad);
             }
 
             postActualziacion();
@@ -141,12 +163,17 @@ public class AlquilerController extends BaseController<AlquilerDTO, Long> {
             return redirectList;
 
         } catch (ErrorServiceException e) {
+            System.err.println("Error de validación: " + e.getMessage());
             model.addAttribute("msgError", e.getMessage());
-            try { preAlta(); } catch (Exception ex) { /* Ignorar error de recarga */ }
+            model.addAttribute("isDisabled", false);
+            try { preAlta(); } catch (Exception ex) { }
             return viewEdit;
         } catch (Exception e) {
+            System.err.println("Error inesperado en actualizar alquiler:");
+            e.printStackTrace();
             model.addAttribute("msgError", "Error de Sistema: " + e.getMessage());
-            try { preAlta(); } catch (Exception ex) { /* Ignorar error de recarga */ }
+            model.addAttribute("isDisabled", false);
+            try { preAlta(); } catch (Exception ex) { }
             return viewEdit;
         }
     }

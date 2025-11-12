@@ -3,9 +3,11 @@ package com.clienteAdmin.clienteAdmin.services;
 import com.clienteAdmin.clienteAdmin.DTO.VehiculoDTO;
 import com.clienteAdmin.clienteAdmin.exceptions.ErrorServiceException;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -14,25 +16,24 @@ public class VehiculoService extends BaseServiceClient<VehiculoDTO, Long> {
         super("http://localhost:9000/api/v1/vehiculos", VehiculoDTO.class);
     }
 
-    public void cambiarEstado(Long vehiculoId, String nuevoEstado) throws ErrorServiceException {
+    public void cambiarEstado(Long vehiculoId, String nuevoEstado) {
         try {
             String url = apiUrl + "/" + vehiculoId + "/estado";
 
-            Map<String, String> body = Map.of("estado", nuevoEstado);
+            HttpHeaders headers = authService.authHeaders();
 
-            // prepara los headers de autenticación (usando 'authService' heredado)
-            HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, authService.authHeaders());
+            Map<String, String> body = new HashMap<>();
+            body.put("estado", nuevoEstado);
 
-            // llama a la API (usando 'restTemplate' heredado)
-            restTemplate.exchange(
-                    url,
-                    HttpMethod.PUT,
-                    entity,
-                    Void.class
-            );
+            HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
+
+            restTemplate.exchange(url, HttpMethod.PUT, entity, VehiculoDTO.class);
+
+            System.out.println("Estado del vehículo " + vehiculoId + " cambiado a: " + nuevoEstado);
 
         } catch (Exception e) {
-            throw new ErrorServiceException("Error al cambiar estado del vehículo: " + e.getMessage());
+            System.err.println("Error al cambiar estado del vehículo: " + e.getMessage());
+            throw new RuntimeException("Error al cambiar estado del vehículo: " + e.getMessage());
         }
     }
 }

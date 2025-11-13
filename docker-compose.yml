@@ -1,0 +1,92 @@
+version: '3.8'
+
+env_file:
+  - .env.dev
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  servidor:
+    build:
+      context: ./Servidor
+      dockerfile: Dockerfile
+    container_name: servidor_app
+    restart: always
+    ports:
+      - "9000:9000"
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USER_NAME: ${DB_USER_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      EMAIL_USERNAME: ${EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID}
+      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  cliente-admin:
+    build:
+      context: ./ClienteAdmin
+      dockerfile: Dockerfile
+    container_name: cliente_admin_app
+    restart: always
+    ports:
+      - "8090:8090"
+    environment:
+      SERVIDOR_API_URL: ${SERVIDOR_API_URL}
+    depends_on:
+      - servidor
+    networks:
+      - app-network
+
+  cliente-promo:
+    build:
+      context: ./ClientePromo
+      dockerfile: Dockerfile
+    container_name: cliente_promo_app
+    restart: always
+    ports:
+      - "8050:8050"
+    environment:
+      SERVIDOR_API_URL: ${SERVIDOR_API_URL}
+      API_KEY: ${API_KEY}
+      MP_TOKEN: ${MP_TOKEN}
+    depends_on:
+      - servidor
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

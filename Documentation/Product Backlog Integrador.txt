@@ -1,0 +1,42 @@
+Product Backlog
+Personal Administrativo:
+
+Registrar alquiler de vehículo (Alta)
+Registrar promoción con código y porcentaje de descuento (Alta)
+Enviar promociones por correo a los clientes (Media)
+Registrar modelo de vehículo con características e imagen (Alta)
+Registrar vehículo con patente y estado (Alta)
+Definir tarifa diaria y vigencia para un modelo (Alta)
+Adjuntar imágenes a vehículos y clientes (Alta)
+Cambiar clave de acceso (Alta)
+Registrar pago del alquiler y generar factura (Alta)
+Registrar clientes con datos personales y nacionalidad (Alta)
+Registrar devolución de vehículo (Alta)
+Calcular costo del alquiler según días de uso y tarifa del modelo (Alta)
+Abrir WhatsApp Web con el número del cliente (Media)
+Iniciar sesión con usuario y contraseña (Alta)
+
+Jefe Administrativo:
+
+Crear nuevo empleado (Alta)
+Ver dashboard con resumen de clientes, autos, facturas y montos (Baja)
+Ver reportes de vehículos alquilados y dinero recaudado (Alta)
+Exportar lista de clientes en Excel (Alta)
+Gestionar países, provincias, departamentos y localidades (Media)
+Gestionar nacionalidades disponibles (Media)
+
+Cliente:
+
+Aplicar código de promoción vigente (Alta)
+Visualizar vehículos disponibles con fotos, costos y características (Alta)
+Abonar alquiler mediante billetera virtual (Alta)
+Registrarse e iniciar sesión con redes sociales (Alta)
+Registrarse creando usuario y contraseña (Alta)
+Ver historial de alquileres y descargar facturas (Alta)
+Ver información institucional de la empresa (Media)
+Ver información del clima actual y pronóstico (Media)
+Ver cotización actual del dólar (Media)
+
+Sistema:
+
+Enviar correo y WhatsApp automático previo a devolución (Alta)

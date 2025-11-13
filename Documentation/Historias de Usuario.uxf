@@ -1,0 +1,371 @@
+<diagram program="umletino" version="15.1"><zoom_level>1</zoom_level><element><id>UMLNote</id><coordinates><x>28</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar el alquiler de un vehículo con los datos del titular y el período 
+de uso,
+Para gestionar la disponibilidad y cumplir con los requisitos legales</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>77</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se registra fecha de inicio y fecha de devolución.
+-Se ingresan datos personales del titular: nombre, apellido, documento, 
+fecha de nacimiento, contacto, dirección personal y de estadía, nacionalidad.
+-Se adjuntan archivos PDF o Word del carnet de conducir y documento de 
+identidad.
+-Se actualiza automáticamente la cantidad disponible del modelo alquilado.
+-El modelo se oculta del sitio institucional si no hay unidades disponibles.
+
+
+
+Alta - 6 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>28</x><y>163</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar una promoción con código y porcentaje de descuento,
+Para que los clientes puedan aplicarla al momento de calcular el costo del 
+alquiler</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>77</x><y>163</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se puede registrar un nuevo código de promoción.
+-Se define el porcentaje de descuento asociado al código.
+-Se puede establecer una fecha de inicio y fin de vigencia.
+-El sistema valida que el código sea único.
+-El código queda disponible para ser aplicado por clientes en el cálculo del
+alquiler
+
+
+
+
+Alta - 3 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>28</x><y>186</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero enviar automáticamente promociones registradas a los clientes por 
+correo,
+Para incentivar nuevos alquileres y fidelizar clientes</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>77</x><y>186</y><w>46</w><h>18</h></coordinates><panel_attributes>-El sistema permite seleccionar una promoción activa para ser enviada.
+-Se envía un correo automático a todos los clientes registrados.
+-El correo incluye el código de promoción, porcentaje de descuento y vigencia.
+-Se registra la fecha de envío y destinatarios para auditoría.
+
+
+
+
+
+
+Media - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>278</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero adjuntar imágenes a los vehículos y clientes,
+Para identificar visualmente los registros en el sistema.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>278</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se permite subir imágenes en formatos comunes (JPG, PNG).
+-Las imágenes se almacenan con tipo (vehículo/persona).
+-Al visualizar un cliente o vehículo, debe mostrarse su imagen.
+
+
+
+
+
+
+
+Alta - 3 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>160</y><w>46</w><h>18</h></coordinates><panel_attributes>Como jefe administrativo,
+Quiero crear un nuevo empleado,
+Para permitir el ingreso de nuevos empleados..</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>160</y><w>46</w><h>18</h></coordinates><panel_attributes>-Solo los usuarios con rol JEFE pueden crear nuevos empleados.
+
+
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>299</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero cambiar mi clave de acceso,
+Para mantener la seguridad de mi cuenta.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>299</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se valida la clave actual antes de cambiarla.
+-No se permite reutilizar la clave anterior.
+-Se notifica “Cambio de clave exitoso” en pantalla.
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>248</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>Como sistema,
+Quiero enviar un correo y WhatsApp automático un día antes de la fecha de 
+devolución,
+Para recordar al cliente la entrega del vehículo.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>302</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>-El sistema busca alquileres con devolución = mañana.
+-Se envía correo y WhatsApp al titular.
+-Se registra la fecha y hora de envío.
+
+
+
+
+
+
+
+Alto - 3 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>321</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar el pago del alquiler y generar la factura,
+Para entregar comprobante al cliente.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>321</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se puede elegir método de pago (efectivo, transferencia, billetera virtual).
+-Se genera número de factura único.
+-La factura se puede descargar en PDF.
+-El cliente puede visualizar su factura desde su perfil.
+
+
+
+
+
+
+Alta - 3 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>201</y><w>46</w><h>18</h></coordinates><panel_attributes>Como jefe administrativo,
+Quiero ver reportes de vehículos alquilados y dinero recaudado,
+Para analizar la performance del negocio.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>201</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se selecciona período de fechas.
+-El sistema muestra total recaudado y vehículos alquilados por modelo.
+-Se puede descargar el reporte en PDF o Excel.
+
+
+
+
+
+
+
+Alto - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>342</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar clientes con sus datos personales y nacionalidad,
+Para poder asociarlos a un alquiler.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>342</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se completan nombre, apellido, documento, fecha de nacimiento, contactos, direcciones y nacionalidad.
+-Se validan campos obligatorios.
+-Se asocia automáticamente la imagen del cliente (si se sube).
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero visualizar vehículos disponibles con fotos, costos y características,
+Para consultar opciones de alquiler.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se muestran solo los modelos con disponibilidad &gt; 0.
+-Se listan marca, modelo, año, cantidad de asientos, puertas, costo diario.
+-Se ocultan automáticamente los modelos sin stock.
+
+
+
+
+
+
+
+Alto - 4 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>222</y><w>46</w><h>18</h></coordinates><panel_attributes>Como jefe administrativo,
+Quiero exportar en Excel la lista de clientes que alquilaron en un período,
+Para mantener registros administrativos.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>222</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se selecciona un rango de fechas.
+-El sistema genera un archivo Excel con nombre, documento, contacto y 
+fechas de alquiler.
+
+
+
+
+
+
+
+Alto - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>162</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero abonar mi alquiler mediante billetera virtual,
+Para evitar pagos en efectivo o transferencia.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>162</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se integra el método de pago con una billetera (por ejemplo, MercadoPago).
+-Se genera comprobante de pago.
+-Se actualiza automáticamente el estado de la factura.
+
+
+
+
+
+
+
+Alto - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>185</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero registrarme e iniciar sesión con mis redes sociales,
+Para acceder rápidamente al sistema.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>185</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se admite login con Google, Facebook o correo electrónico.
+-Se asocia la cuenta social al cliente existente o se crea uno nuevo.
+-Se guarda foto de perfil (si se proporciona).
+
+
+
+
+
+
+
+Alto - 8 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>365</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar la devolución de un vehículo,
+Para que vuelva a estar disponible y se actualice el inventario.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>365</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se selecciona el alquiler y se marca la fecha de devolución real.
+-El estado del vehículo pasa a DISPONIBLE.
+-La cantidad de vehículos alquilados del modelo se actualiza.
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>207</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero registrarme en el sistema creando un usuario y contraseña,
+Para poder gestionar mis alquileres desde mi cuenta.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>207</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se registran datos mínimos: nombre, apellido, email, documento y contraseña.
+-El sistema valida que el correo no esté ya registrado.
+-Tras registrarse, el cliente puede iniciar sesión con email y contraseña.
+
+
+
+
+
+
+
+Alto - 4 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>229</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero ver mi historial de alquileres y descargar las facturas,
+Para tener un registro de todos mis movimientos.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>229</y><w>46</w><h>18</h></coordinates><panel_attributes>-Desde mi perfil se listan todos mis alquileres (fechas, vehículo, importe).
+-Para cada alquiler se puede ver / descargar la factura en PDF.
+-Se indica el estado del pago (pagado / pendiente).
+
+
+
+
+
+
+
+Alto - 3 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>252</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero ver información institucional de “MyCar” (quiénes somos, contacto, 
+horarios, medios de pago),
+Para confiar en la empresa y poder comunicarme si lo necesito.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>252</y><w>46</w><h>18</h></coordinates><panel_attributes>-El sitio institucional muestra secciones de: Quiénes somos, Contacto, 
+Ubicación, Teléfono y Correo.
+
+
+
+
+
+
+
+
+Medio - 1 hora</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>274</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero ver la información del clima actual y pronóstico de la provincia de 
+Mendoza,
+Para planificar mejor mi viaje y alquiler.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>274</y><w>46</w><h>18</h></coordinates><panel_attributes>-El sitio institucional muestra clima actual (temperatura, estado) y un 
+pronóstico breve.
+-La información proviene de una API externa de clima.
+-Si la API falla, se muestra un mensaje sin romper la página.
+
+
+
+
+
+
+Medio - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>181</y><w>46</w><h>18</h></coordinates><panel_attributes>Como jefe administrativo,
+Quiero un dashboard con un resumen de clientes, autos alquilados, 
+facturas y montos,
+Para tener una vista rápida de la situación del negocio.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>181</y><w>46</w><h>18</h></coordinates><panel_attributes>-El dashboard muestra al menos: cantidad de clientes, vehículos 
+disponibles/alquilados, alquileres activos y total recaudado en el mes.
+
+
+
+
+
+
+
+
+Bajo - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>244</y><w>46</w><h>18</h></coordinates><panel_attributes>Como jefe administrativo,
+Quiero gestionar países, provincias, departamentos y localidades,
+Para asegurar que las direcciones se carguen correctamente.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>244</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se pueden crear, modificar y eliminar países, provincias, departamentos y 
+localidades.
+
+
+
+
+
+
+
+
+Medio - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>267</y><w>46</w><h>18</h></coordinates><panel_attributes>Como jefe administrativo,
+Quiero gestionar las nacionalidades disponibles,
+Para poder asignarlas correctamente a los clientes.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>267</y><w>47</w><h>18</h></coordinates><panel_attributes>-Se puede crear, modificar, eliminar y listar nacionalidades.
+-Solo se muestran nacionalidades activas en los formularios de clientes.
+
+
+
+
+
+
+
+
+Media - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>430</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero abrir WhatsApp Web con el número del cliente ya cargado,
+Para poder comunicarme rápidamente desde el sistema.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>430</y><w>46</w><h>18</h></coordinates><panel_attributes>-Desde la ficha de cliente hay un botón “WhatsApp”.
+-Al hacer clic se abre WhatsApp Web con el número del cliente.
+-El número se obtiene de los contactos telefónicos asociados al cliente.
+
+
+
+
+
+
+
+Media - 2 hora</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>142</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>Como usuario del sistema (personal administrativo o jefe),
+Quiero iniciar sesión con usuario y contraseña,
+Para acceder a las funcionalidades de acuerdo a mi rol.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>191</x><y>139</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se validan usuario y contraseña.
+-Si las credenciales son inválidas, se muestra mensaje de error.
+
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>358</x><y>297</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero visualizar la cotización actual del dólar en la página,
+Para tener una referencia del valor del alquiler en mi moneda local.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>28</x><y>208</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar un modelo de vehículo con sus características (marca, modelo, 
+año, cantidad de puertas, cantidad de asientos) y una imagen,
+Para mantener actualizada la flota de modelos disponibles.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>77</x><y>208</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se ingresan marca, modelo, año, puertas y asientos.
+-Se asocia una imagen (JPEG/PNG).
+-Se valida que el modelo no exista previamente.
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>28</x><y>230</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero registrar a un vehiculo creado con patente y su estado 
+(disponible, alquilado, mantenimiento),
+Para llevar el control real de la flota.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>77</x><y>230</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se selecciona modelo y se agregan una patentes.
+-Se define estado inicial (disponible, alquilado o mantenimiento).
+-No se permite registrar una patente duplicada.
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>28</x><y>254</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero definir la tarifa diaria y su vigencia para un modelo de vehículo,
+Para establecer el costo del alquiler.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>254</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se selecciona modelo y año.
+-Se ingresan costo por día y fechas de vigencia.
+-El sistema valida que no haya traslape de vigencias para el mismo modelo.
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>387</y><w>46</w><h>18</h></coordinates><panel_attributes>Como personal administrativo,
+Quiero calcular el costo total del alquiler según días de uso y tarifa del modelo,
+Para informar el importe al cliente antes del pago.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>387</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se calculan los días entre fecha de inicio y devolución.
+-Se aplica la tarifa vigente del modelo.
+-Muestra subtotal y total a pagar.
+
+
+
+
+
+
+
+Alta - 3 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>27</x><y>408</y><w>46</w><h>18</h></coordinates><panel_attributes>Como cliente,
+Quiero ingresar un código de promoción vigente al calcular mi alquiler,
+Para obtener el descuento correspondiente.</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>76</x><y>408</y><w>46</w><h>18</h></coordinates><panel_attributes>-Se ingresa el código de promoción.
+-El sistema valida vigencia y unicidad.
+-Muestra subtotal, descuento y total actualizado.
+
+
+
+
+
+
+
+Alta - 2 horas</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>413</x><y>297</y><w>46</w><h>18</h></coordinates><panel_attributes>-El sitio muestra la cotización actual del dólar oficial.
+-La información proviene de una API externa de tipo cambiario.
+-Si la API falla, se muestra mensaje sin afectar la página.
+
+
+
+
+
+
+
+Media - 2 horas</panel_attributes><additional_attributes></additional_attributes></element></diagram>
